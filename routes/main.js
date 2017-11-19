@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const User = require('../models/user');
 const {ProjectSubmit} = require('../models/proposals');
+var template = require('../server/template');
+var upload = require('../server/upload');
 const async = require('async');
 
 
@@ -38,6 +40,19 @@ router.get('/tables', (req, res, next) => {
         res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
     }
 });
+
+router.get('/registered_user', (req, res, next) => {
+    if(req.user){
+        res.render('main/registered_user', {title: 'Synergy - Admin Dashboard'});
+    }else{
+        res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
+    }
+});
+
+router.get('/template', template.get);
+
+router.post('/registered_user', upload.post);
+
 router.get('/user/:id', (req, res, next) => {
     async.waterfall([
         function(callback){

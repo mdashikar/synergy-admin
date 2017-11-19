@@ -13,6 +13,7 @@ const passportSocketIo = require('passport.socketio');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const config = require('../config/secret');
+var fileUpload = require('express-fileupload');
 
 const sessionStore = new MongoStore({url: config.database, autoReconnect: true});
 
@@ -25,6 +26,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+app.use(fileUpload());
 app.engine('.hbs', expressHbs({ defaultLayout: 'layout', extname: '.hbs'}));
 app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, '../public')));
