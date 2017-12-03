@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
-var register_userSchema = mongoose.Schema({
-   _id: mongoose.Schema.Types.ObjectId,
+var RegisteredStudent = mongoose.model('RegisteredStudent',{
+    _id:{type: mongoose.Schema.Types.ObjectId},
    student_id: {
            type: String,
            required: true
@@ -13,7 +13,5 @@ var register_userSchema = mongoose.Schema({
        default: Date.now
    }
 });
-
-var RegisteredStudent = mongoose.model('RegisteredStudent', register_userSchema);
 
 module.exports = RegisteredStudent;

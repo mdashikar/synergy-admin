@@ -26,6 +26,6 @@ exports.post = function (req, res) {
             if (err) throw err;
          });
           
-         res.render('main/registered_user', {registered});
+         res.render('main/registered_user', {registered, message: req.flash('success', `${registered.length}`)});
      });
 };

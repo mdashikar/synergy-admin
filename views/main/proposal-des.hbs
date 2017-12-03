@@ -1,0 +1,101 @@
+{{> navbar}}
+{{#if projectSubmit}}
+    <div class="container-fluid background">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="div_width">
+                   <img src="img/logo-white.png" height="150" width="150" class="mx-auto d-block img-responsive ">
+                    <h2 class="text-center">Project proposal<br>on</h2>
+                    <h3 class="text-center">{{ projectSubmit.projectType}}</h3>
+    <!--Submitted By-->
+                    <div class="project_member">
+                       <h4 class="text-center">Submitted By</h4>
+                       <br>
+                       <br>
+                       <div class="row">
+                        <div class="text-center col-md-6">
+                            {{#each projectSubmit.memberName}}
+                            <h4>{{ this}}</h4>
+                            {{/each}}
+                            
+                        </div>
+                        <div class="text-center col-md-6">
+                            {{#each projectSubmit.memberId}}
+                            <h4>{{ this}}</h4>
+                            {{/each}}
+                           
+                            
+                        </div>
+                       </div>    
+                    </div>
+    <!--Header-->
+                    <h2 class="text-center">Project Proposal</h2>
+                    <hr>
+                    <br>
+                    <br>
+    <!--Project Name:-->
+                    <p>
+                        <span class="h3" style="letter-spacing: 2px;font-family: 'Roboto', sans-serif;">Project Name: {{projectSubmit.projectName}}</span>   
+
+                    </p>
+                    <br>
+    <!--Abstract:-->
+                    <h3>Abstract:</h3>
+                    <br>
+                    <p>
+                         This application will provide us an easy way to manage our projects. It will establish a good collaboration between students and supervisor. This application will also store all the projects in a project showcase. The users can access the showcase and there will be overview of all completed projects done so far in this application. 
+                    </p>
+                    <br>
+    <!--Objective:-->        
+                    <h3>Objective:</h3>
+                    <br>
+                    <p>
+                      The goal of the project is to develop a web based application named "Synergy" which can be accessed via web browser. The platform will provide students to submit their project proposals and project board can assign a supervisor. A supervisor can create project board and also add students to that board. Synergy is a collaboration tool that will organize projects into boards. In one glance, Synergy will show you what's being worked on, who's working on what, and where something is in a process. All projects, tasks, all of team-organized, accounted for, and easily visible at a glance. New users can instantly understand the list and card metaphor and can be working on Synergy within minutes. 
+                    </p>
+                    <br>
+    <!--Key feature-->        
+                    <h3>Key features:</h3>
+                    <br>
+                    <ul class="list-unstyled">
+                        <li>-Project Planning</li>
+                        <li>-Collaboration</li>
+                        <li>-File Sharing</li>
+                        <li>-Bug Tracking</li>
+                        <li>-Milestone Tracking </li>
+                        <li>-Task Management</li>
+                        <li>-Resource Management </li>
+                    </ul>
+                    <br>
+    <!--Number of module:-->        
+                    <h3>Number of Modules:</h3>
+                    <br>
+                    <p>The system after careful analysis has been identified to be presented with the following modules: </p>
+                    <ul class="list-unstyled">
+                        <li>-User Module</li>
+                        <li>-Project-board Module</li>
+                    </ul>
+                    <br>
+    <!--Software requirement:-->        
+                    <h3>Software Requirements:</h3>
+                    <br>
+                    <p>Programming Language: JavaScript, php, ruby </p>
+                    <p>User Interface: HTML, CSS </p>
+                    <p>IDE/Workbench: vs code, brackets </p>
+                    <p>Database : MySQL </p>
+                    <p>Version Control System : Git</p>
+                    <br>
+    <!--Conclusion:-->        
+                    <h3>Conclusion:</h3>
+                    <br>
+                    <p>Our main purpose is to develop this platform for students like us, developers, company etc. If we get proper support from the authority then we can develop this platform better in near future. </p>
+                    <div class="btn-group">
+                        <a href="/postApprove" type="button" class="btn btn-success">Approve</a>
+                        <a href="/postCancel" type="button" class="btn btn-danger">Reject</a>
+                        
+                    </div>
+                </div>
+                
+            </div>    
+        </div>
+    </div>
+{{/if}}

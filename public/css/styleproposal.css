@@ -1,0 +1,51 @@
+h1,h4,h3,h2,h5,h6
+{
+   letter-spacing: 2px; 
+   font-family: 'Spectral SC', serif;
+   font-family: 'Lato', sans-serif;
+
+
+}
+.div_width
+{
+    width: 80%;
+    margin: auto;
+    padding-top: 10%;
+     border: 1px solid #949494;
+    padding: 5%;
+    box-shadow: 10px 10px 5px black;
+     background-color: #0d161f;
+    
+}
+.project_member
+{
+    margin-top: 10%;
+    margin-bottom: 15%;
+}
+p,li
+{
+    font-family: 'Montserrat', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
+    font-family: 'Quicksand', sans-serif;
+    text-align: justify;
+    letter-spacing: 1px;
+    
+   
+    
+}
+.background
+{
+    background-color:#304150;
+    color:#bdc3c7;
+    padding: 30px;
+}
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+img
+{
+    margin-bottom: 5%;
+}

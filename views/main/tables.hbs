@@ -41,15 +41,23 @@
                         </thead>
                         <tbody>
                            {{#each projectSubmit}}
-                          <tr>
-                            <th scope="row">{{@key}}</th>
-                            <td>{{projectName}}</td>
-                            <td>{{projectType}}</td>
-                            <td>{{#with memberId}}
-                                  <h2>{{this}}</h2>
-                                  {{/with}}
-                          </td>
-                          </tr>
+                        
+                            <tr>
+                              
+                              <th scope="row">  {{@key}}</th>
+                              <td>
+                                  <div class="text">
+                                      <a href="/{{this._id}}"><h3 class="h4">{{projectName}}</h3></a><br><small>Lorem Ipsum Dolor</small>
+                                  </div>
+                              </td>
+                              <td>{{projectType}}</td>
+                              <td>{{#with memberId}}
+                                    <h2>{{this}}</h2>
+                                    {{/with}}
+                              </td>
+                             
+                            </tr> 
+                          
                           {{/each}}
                           
                           </tr>
