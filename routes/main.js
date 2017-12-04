@@ -73,30 +73,43 @@ router.get('/rejected', (req, res, next) => {
     }
 });
 
-router.get('/:id/postapprove', (req, res, next) => {
-    
-    ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit)=>{
-        console.log("This is postapprove id " + req.params.id);
-            // Update each attribute with any possible attribute that may have been submitted in the body of the request
-            // If that attribute isn't in the request body, default back to whatever it was before.
-            projectSubmit.approve = true;
-            projectSubmit.pending = false;
-            
 
-            // Save the updated document back to the database
-            projectSubmit.save((err, projectSubmit) => {
-                if (err) {
-                    return res.status(500).send(err)
-                    console.log("update error " + req.params.id);
-                }
-                req.flash('success', 'Approved');
-                res.redirect('/proposals');
-            });
-         
-     });
+
+router.get('/registered_user', (req, res, next) => {
+    if(req.user){
+        res.render('main/registered_user', {title: 'Synergy - Admin Dashboard'});
+    }else{
+        res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
+    }
 });
 
-router.get('/:id/postcancel', (req, res, next) => {
+
+
+
+router.get('/template', template.get);
+
+router.post('/registered_user', upload.post);
+
+router.get('/proposals/:id', (req, res, next) => {
+    
+        console.log("object id" + req.params.id);
+        var id = req.params.id;
+        
+        ProjectSubmit.findById(id).then((projectSubmit)=>{
+            res.render('main/proposal-des', {title: req.params.projectName, projectSubmit: projectSubmit});
+            // res.render('proposalList', { title: 'Synergy Proposal List'});                 
+         }, (e) => {
+            return res.status(404).send(e);
+         });
+        
+        // if (id.match(/^[0-9a-fA-F]{24}$/)) {
+        //    //Yes, it's a valid ObjectId, proceed with `findById` call.
+        // }
+    
+    
+});
+
+router.get('/proposals/:id/postcancel', (req, res, next) => {
     
     ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit)=>{
         console.log("This is postapprove id " + req.params.id);
@@ -120,38 +133,27 @@ router.get('/:id/postcancel', (req, res, next) => {
 });
 
 
-router.get('/registered_user', (req, res, next) => {
-    if(req.user){
-        res.render('main/registered_user', {title: 'Synergy - Admin Dashboard'});
-    }else{
-        res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
-    }
-});
-
-
-
-
-router.get('/template', template.get);
-
-router.post('/registered_user', upload.post);
-
-router.get('/:id', (req, res, next) => {
+router.get('/proposals/:id/postapprove', (req, res, next) => {
     
-        console.log("object id" + req.params.id);
-        var id = req.params.id;
-        
-        ProjectSubmit.findById(id).then((projectSubmit)=>{
-            res.render('main/proposal-des', {title: req.params.projectName, projectSubmit: projectSubmit});
-            // res.render('proposalList', { title: 'Synergy Proposal List'});                 
-         }, (e) => {
-            return res.status(404).send(e);
-         });
-        
-        // if (id.match(/^[0-9a-fA-F]{24}$/)) {
-        //    //Yes, it's a valid ObjectId, proceed with `findById` call.
-        // }
-    
-    
+    ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit)=>{
+        console.log("This is postapprove id " + req.params.id);
+            // Update each attribute with any possible attribute that may have been submitted in the body of the request
+            // If that attribute isn't in the request body, default back to whatever it was before.
+            projectSubmit.approve = true;
+            projectSubmit.pending = false;
+            
+
+            // Save the updated document back to the database
+            projectSubmit.save((err, projectSubmit) => {
+                if (err) {
+                    return res.status(500).send(err)
+                    console.log("update error " + req.params.id);
+                }
+                req.flash('success', 'Approved');
+                res.redirect('/proposals');
+            });
+         
+     });
 });
 
 

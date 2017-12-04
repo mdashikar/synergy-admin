@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="div_width">
-                   <img src="img/logo-white.png" height="150" width="150" class="mx-auto d-block img-responsive ">
+                   <img src="/img/logo-white.png" height="150" width="150" class="mx-auto d-block img-responsive ">
                     <h2 class="text-center">Project proposal<br>on</h2>
                     <h3 class="text-center">{{ projectSubmit.projectType}}</h3>
     <!--Submitted By-->
@@ -90,8 +90,8 @@
                     <p>Our main purpose is to develop this platform for students like us, developers, company etc. If we get proper support from the authority then we can develop this platform better in near future. </p>
                     {{#if projectSubmit.pending}}
                         <div class="btn-group">
-                            <a href="/{{projectSubmit._id}}/postapprove" type="button" class="btn btn-success">Approve</a>
-                            <a href="/{{projectSubmit._id}}/postcancel" type="button" class="btn btn-danger">Reject</a>
+                            <a href="/proposals/{{projectSubmit._id}}/postapprove" type="button" class="btn btn-success">Approve</a>
+                            <a href="/proposals/{{projectSubmit._id}}/postcancel" type="button" class="btn btn-danger">Reject</a>
                             
                         </div>
                     {{/if}}
