@@ -79,6 +79,8 @@ function onAuthorizeFail(data, message, error, accept){
 app.use(flash());
 //Local Modules 
 
+
+
 app.use( function(req, res, next){
     res.locals.user = req.user;
     next();

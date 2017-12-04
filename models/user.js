@@ -8,7 +8,8 @@ const UserSchema = new Schema ({
     email: {type:String, unique: true, lowercase: true},
     name: String,
     password: String,
-    username: {type: String, unique: true, lowercase:true}
+    username: {type: String, unique: true, lowercase:true},
+    secretToken : {type: String}
 });
 
 

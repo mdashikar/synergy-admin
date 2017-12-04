@@ -127,16 +127,20 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      
+      <form method="post" action="/invite-supervisor">
       <div class="modal-body">
           <div class="form-group">
             <label class="form-control-label">Email</label>
-            <input type="email" placeholder="Email Address" class="form-control">
+            <input type="email" name="invite_email" placeholder="Email Address" class="form-control">
           </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="submit" class="btn btn-primary">Add</button>
       </div>
+      </form>
+      
     </div>
   </div>
 </div>
