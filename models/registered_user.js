@@ -7,7 +7,7 @@ var RegisteredStudent = mongoose.model('RegisteredStudent',{
            required: true
            
    },
-   course_code : {type: String, required: true, unique: true},
+   course_code : {type: String, required: true},
    created: { 
        type: Date,
        default: Date.now

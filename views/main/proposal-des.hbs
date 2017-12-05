@@ -3,7 +3,48 @@
     <div class="container-fluid background">
         <div class="row">
             <div class="col-md-12">
+                    
                 <div class="div_width">
+                    {{#if projectSubmit.approve}}
+                       
+
+                        <div class="col-lg-4">
+                            
+                                <button type="button" data-toggle="modal" data-target="#myModal2" class="btn btn-default">Assign Supervisor</button>
+                                <!-- Modal-->
+                                <div id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+                                    <div role="document" class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h4 id="exampleModalLabel" class="modal-title">Assign Supervisor</h4>
+                                            <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                                            </div>
+                                            <div class="modal-body">
+                                            
+                                            <form>
+                                                <div class="form-group">
+                                                    <label>Select Supervisor</label>
+                                                    <select class="custom-select">
+                                                        <option selected> Choose One...</option>
+                                                        <option value="MSA">MSA</option>
+                                                        <option value="MAK">MAK</option>
+                                                        <option value="AKS">AKS</option>
+                                                    </select>                                                                                
+                                                </div>
+                                                
+                                                
+                                            </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                                            <button type="button" class="btn btn-primary">Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                        </div>
+                    {{/if}}
                    <img src="/img/logo-white.png" height="150" width="150" class="mx-auto d-block img-responsive ">
                     <h2 class="text-center">Project proposal<br>on</h2>
                     <h3 class="text-center">{{ projectSubmit.projectType}}</h3>
@@ -95,6 +136,7 @@
                             
                         </div>
                     {{/if}}
+                    
                 </div>
                 
             </div>    

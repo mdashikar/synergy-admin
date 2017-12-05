@@ -5,7 +5,7 @@ const passportConfig = require('../config/passport');
 const User = require('../models/user');
 const mailer = require('../misc/mailer');
 
-router.route('/signup/:secretToken')
+router.route('/signup')
     .get( (req, res, next) => {
         res.render('accounts/signup', {message : req.flash('errors')});
     })
@@ -24,7 +24,7 @@ router.route('/signup/:secretToken')
                 user.email = req.body.email;
                 user.username = req.body.username;
                 user.password = req.body.password;  
-                user.secretToken = req.body.secretToken;            
+                //user.secretToken = req.body.secretToken;            
                 user.save(function(err){
                     // req.logIn(user, function(err){
                         if(err) return next(err);
@@ -43,7 +43,7 @@ router.route('/signup/:secretToken')
              user.email = req.body.email;
              user.username = req.body.username;
              user.password = req.body.password;    
-             user.secretToken = req.body.secretToken;          
+             //user.secretToken = req.body.secretToken;          
              user.save(function(err){
                  // req.logIn(user, function(err){
                      if(err) return next(err);
@@ -52,25 +52,25 @@ router.route('/signup/:secretToken')
              });
         }
     });
-    User.findOne({secretToken: req.body.secretToken}, function(err, existingUser){
-        if(existingUser){
-            req.flash('errors', 'You are not eligible to register here');
-            res.redirect('/signup');
-        }else{
-             var user = new User();
-             user.name = req.body.name;
-             user.email = req.body.email;
-             user.username = req.body.username;
-             user.password = req.body.password;  
-             user.secretToken = req.body.secretToken;            
-             user.save(function(err){
-                 // req.logIn(user, function(err){
-                     if(err) return next(err);
-                     res.redirect('/');
-                 // });
-             });
-        }
-    });
+    // User.findOne({secretToken: req.body.secretToken}, function(err, existingUser){
+    //     if(existingUser){
+    //         req.flash('errors', 'You are not eligible to register here');
+    //         res.redirect('/signup');
+    //     }else{
+    //          var user = new User();
+    //          user.name = req.body.name;
+    //          user.email = req.body.email;
+    //          user.username = req.body.username;
+    //          user.password = req.body.password;  
+    //          user.secretToken = req.body.secretToken;            
+    //          user.save(function(err){
+    //              // req.logIn(user, function(err){
+    //                  if(err) return next(err);
+    //                  res.redirect('/');
+    //              // });
+    //          });
+    //     }
+    // });
 
     });
 
