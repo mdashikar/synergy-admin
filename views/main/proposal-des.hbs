@@ -21,24 +21,24 @@
                                             </div>
                                             <div class="modal-body">
                                             
-                                            <form>
+                                            <form method="post" action="/proposals/assign/{{projectSubmit._id}}">
                                                 <div class="form-group">
                                                     <label>Select Supervisor</label>
-                                                    <select class="custom-select">
+                                                    <select class="custom-select" name="name">
                                                         <option selected> Choose One...</option>
-                                                        <option value="MSA">MSA</option>
-                                                        <option value="MAK">MAK</option>
-                                                        <option value="AKS">AKS</option>
+                                                        {{#each supervisor}}
+                                                            <option  value="{{this.name}}">{{this.name}}</option>
+                                                        {{/each}}
                                                     </select>                                                                                
                                                 </div>
-                                                
+                                                <div class="modal-footer">
+                                                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Add</button>
+                                                </div>
                                                 
                                             </form>
                                             </div>
-                                            <div class="modal-footer">
-                                            <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
-                                            <button type="button" class="btn btn-primary">Add</button>
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>

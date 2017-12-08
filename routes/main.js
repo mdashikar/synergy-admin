@@ -1,5 +1,8 @@
+//import { ObjectID } from './C:/Users/Test/AppData/Local/Microsoft/TypeScript/2.6/node_modules/@types/bson';
+
 const router = require('express').Router();
 const User = require('../models/user');
+const Supervisor = require('../models/supervisor');
 const _ = require('lodash');
 const {ProjectSubmit} = require('../models/proposals');
 var template = require('../server/template');
@@ -53,6 +56,7 @@ router.get('/approved', (req, res, next) => {
          }, (e) => {
              res.status(404).send(e);
          });
+        
     }else{
         res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
     }
@@ -96,12 +100,24 @@ router.get('/proposals/:id', (req, res, next) => {
         var id = req.params.id;
         
         ProjectSubmit.findById(id).then((projectSubmit)=>{
-            res.render('main/proposal-des', {title: req.params.projectName, projectSubmit: projectSubmit});
+            //res.render('main/proposal-des', {title: req.params.projectName, projectSubmit: projectSubmit});
+            Supervisor.find({}).then((supervisor) =>{
+                res.render('main/proposal-des', {title: 'Synergy - Admin Dashboard',projectSubmit: projectSubmit, supervisor: supervisor});        
+            });
             // res.render('proposalList', { title: 'Synergy Proposal List'});                 
          }, (e) => {
             return res.status(404).send(e);
          });
-        
+        //  ProjectSubmit.find({'approve': 'true'}).then((projectSubmit)=>{
+            
+        //     Supervisor.find({}).then((supervisor) =>{
+        //         res.render('main/proposal-des', {title: 'Synergy - Admin Dashboard', supervisor: supervisor});        
+        //      });
+             
+        //  }, (e) => {
+        //      res.status(404).send(e);
+        //  });
+         
         // if (id.match(/^[0-9a-fA-F]{24}$/)) {
         //    //Yes, it's a valid ObjectId, proceed with `findById` call.
         // }
@@ -156,5 +172,33 @@ router.get('/proposals/:id/postapprove', (req, res, next) => {
      });
 });
 
+router.post('/proposals/assign/:id', (req, res, next) => {
+    // console.log('IDDDD ', + req.params.id);
+    // Supervisor.findOne({"name" : req.body.name}).then((supervisor)=> {
+    //     supervisor.proposals.push = req.params.id;
+    //     console.log(req.params.id);
+    //     supervisor.save((err, supervisor) => {
+    //         if (err) {
+    //             return res.status(500).send(err)
+    //             console.log("update error " + req.params.id);
+    //         }
+    //         req.flash('success', 'Assigned Successfully');
+    //         res.redirect('/proposals');
+    //     });
 
+    //  }
+     Supervisor.findOneAndUpdate(
+        {"name": req.body.name},
+        { $push: {"proposals": req.params.id}},
+        {  safe: true, upsert: true},
+          function(err, supervisor) {
+            if(err){
+               console.log(err);
+               return res.send(err);
+            }else{
+                req.flash('success', 'Assigned Successfully');
+                res.redirect('/approved');
+            }
+         });
+});
 module.exports = router;
