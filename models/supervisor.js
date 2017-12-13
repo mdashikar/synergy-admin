@@ -10,7 +10,7 @@ const SupervisorSchema = new Schema ({
     password: String,
     username: {type: String, unique: true, lowercase:true},
     proposals: [{
-        proposal: {type: Schema.Types.ObjectId, ref: 'ProjectSubmit'}
+       type: String
     }],
     secretToken : {type: String}
 });

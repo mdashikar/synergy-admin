@@ -31,6 +31,8 @@ router.get('/', (req, res, next) => {
 router.get('/supervisors', (req, res, next) => {
     if(req.user){
         Supervisor.find({}).then((supervisor)=>{
+            let len = supervisor.proposals.lenth();
+            console.log('lenthhh', len);
             res.render('main/supervisor', {title: 'Synergy - Admin Dashboard', supervisor: supervisor, message: req.flash('success')});
             // res.render('proposalList', { title: 'Synergy Proposal List'});
              
