@@ -4,6 +4,9 @@ const randomstring = require('randomstring');
 const passportConfig = require('../config/passport');
 const User = require('../models/user');
 const mailer = require('../misc/mailer');
+const Invite = require('../models/invite');
+
+var value = "hi";
 
 router.route('/signup')
     .get( (req, res, next) => {
@@ -23,8 +26,7 @@ router.route('/signup')
                 user.name = req.body.name;
                 user.email = req.body.email;
                 user.username = req.body.username;
-                user.password = req.body.password;  
-                //user.secretToken = req.body.secretToken;            
+                user.password = req.body.password;             
                 user.save(function(err){
                     // req.logIn(user, function(err){
                         if(err) return next(err);
@@ -52,25 +54,6 @@ router.route('/signup')
              });
         }
     });
-    // User.findOne({secretToken: req.body.secretToken}, function(err, existingUser){
-    //     if(existingUser){
-    //         req.flash('errors', 'You are not eligible to register here');
-    //         res.redirect('/signup');
-    //     }else{
-    //          var user = new User();
-    //          user.name = req.body.name;
-    //          user.email = req.body.email;
-    //          user.username = req.body.username;
-    //          user.password = req.body.password;  
-    //          user.secretToken = req.body.secretToken;            
-    //          user.save(function(err){
-    //              // req.logIn(user, function(err){
-    //                  if(err) return next(err);
-    //                  res.redirect('/');
-    //              // });
-    //          });
-    //     }
-    // });
 
     });
 
@@ -92,30 +75,78 @@ router.get('/user-logout', (req,res, next) => {
 
 //Invite students
 
-router.post('/invite-supervisor', (req,res) => {
-    const email = req.body.invite_email;
-    const secretToken = randomstring.generate();
-  //  console.log('Email :',email);
+// router.post('/invite-supervisor', (req,res) => {
+//     const email = req.body.invite_email;
+//     const secretToken = randomstring.generate();
+//   //  console.log('Email :',email);
 
-    //Composing email
-    const html = `Hi there
-    <br/>
-    To get registered please click on the following link and paste your secret token for registration.
-    <br/><br/>
-    Token : ${secretToken}
-    <br/><br/>
+//     //Composing email
+//     const html = `Hi there
+//     <br/>
+//     To get registered please click on the following link.
+//     <br/><br/>
+//     Token : ${secretToken}
+//     <br/><br/>
     
-    <a href="http://localhost:3000/signup/${secretToken}">http://localhost:3000/signup/${secretToken}</a>
+//     <a href="http://localhost:3000/signup/${secretToken}">http://localhost:3000/signup/${secretToken}</a>
     
-    <br/><br/>
-    Have a good day!`;
+//     <br/><br/>
+//     Have a good day!`;
    
-    //<a href="http://localhost:3000/users/verify/${secretToken}">p</a>
+//     //<a href="http://localhost:3000/users/verify/${secretToken}">p</a>
 
-    mailer.sendEmail('admin@teamfly.com',email,'Please signup through this link',html);
-    req.flash('success','An invitation email sent to '+email);
-    res.redirect('/');
+//     mailer.sendEmail('admin@teamfly.com',email,'Please signup through this link',html);
+//     req.flash('success','An invitation email sent to '+email);
+//     res.redirect('/');
+
+// });
+
+router.post('/invite-supervisor', (req,res) => {
+    
+    var secretToken = randomstring.generate();
+    
+
+    Invite.findOne({email: req.body.invite_email}, function(err, existingUser){
+        if(existingUser){
+            req.flash('errors', 'Already invitation sent');
+            res.redirect('/');
+        }else{
+            var invite = new Invite();
+            var email = req.body.invite_email;
+
+            invite.email = email;
+            invite.secretToken = secretToken;
+
+            invite.save(function(err){
+                
+                    if(err) return next(err);
+                    //res.redirect('/');
+                    //Composing email
+                    const html = `Hi there
+                    <br/>
+                    To get registered please click on the following link.
+                    <br/><br/>
+                    Token : ${secretToken}
+                    <br/><br/>
+                    
+                    <a href="http://localhost:3000/signup/${secretToken}">http://localhost:3000/signup/${secretToken}</a>
+                    
+                    <br/><br/>
+                    Have a good day!`;
+                
+                  
+        
+                    mailer.sendEmail('admin@synergy.com',email,'Please signup through this link',html);
+                    res.redirect('/');
+                
+            });
+             
+        }
+    });
+                 
+    
 
 });
+
 
 module.exports = router;
