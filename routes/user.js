@@ -130,7 +130,7 @@ router.post('/invite-supervisor', (req,res) => {
                     Token : ${secretToken}
                     <br/><br/>
                     
-                    <a href="https://synergy-supervisor.herokuapp.com/signup-supervisor/${secretToken}">https://synergy-supervisor.herokuapp.com/signup-supervisor/${secretToken}</a>
+                    <a href="https://s-supervisor.herokuapp.com/signup-supervisor/${secretToken}">https://s-supervisor.herokuapp.com/signup-supervisor/${secretToken}</a>
                     
                     <br/><br/>
                     Have a good day!`;
