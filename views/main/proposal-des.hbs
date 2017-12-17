@@ -132,9 +132,39 @@
                     {{#if projectSubmit.pending}}
                         <div class="btn-group">
                             <a href="/proposals/{{projectSubmit._id}}/postapprove" type="button" class="btn btn-success">Approve</a>
-                            <a href="/proposals/{{projectSubmit._id}}/postcancel" type="button" class="btn btn-danger">Reject</a>
+                            {{!-- <a href="/proposals/{{projectSubmit._id}}/postcancel" type="button" class="btn btn-danger">Reject</a> --}}
+                            <a type="button" class="btn btn-danger" data-toggle="modal" data-target="#rejectModal">Reject</a>
                             
                         </div>
+                        <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Send Rejection Message</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                
+                                <form method="post" action="/proposals/{{projectSubmit._id}}/reject-message">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label class="form-control-label">Enter Message</label>
+                                        
+                                        <textarea class="form-control" name="message" rows="3" id="comment"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success">Submit</button>
+                                    {{!-- <a type="submit" href="/proposals/{{projectSubmit._id}}/reject-message"class="btn btn-primary">Send</a> --}}
+                                </div>
+                                </form>
+                                
+                                </div>
+                            </div>
+                            </div>
+                        
                     {{/if}}
                     
                 </div>

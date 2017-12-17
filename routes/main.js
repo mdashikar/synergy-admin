@@ -9,6 +9,7 @@ var template = require('../server/template');
 var upload = require('../server/upload');
 const async = require('async');
 const mongoose = require('mongoose');
+const mailer = require('../misc/mailer');
 var ObjectId = mongoose.Types.ObjectId;
 
 
@@ -31,8 +32,8 @@ router.get('/', (req, res, next) => {
 router.get('/supervisors', (req, res, next) => {
     if(req.user){
         Supervisor.find({}).then((supervisor)=>{
-            let len = supervisor.proposals.lenth();
-            console.log('lenthhh', len);
+           // let len = supervisor.proposals.lenth();
+           // console.log('lenthhh', len);
             res.render('main/supervisor', {title: 'Synergy - Admin Dashboard', supervisor: supervisor, message: req.flash('success')});
             // res.render('proposalList', { title: 'Synergy Proposal List'});
              
@@ -143,15 +144,67 @@ router.get('/proposals/:id', (req, res, next) => {
     
 });
 
-router.get('/proposals/:id/postcancel', (req, res, next) => {
+// router.get('/proposals/:id/reject-message', (req, res, next) => {
     
-    ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit)=>{
-        console.log("This is postapprove id " + req.params.id);
+//     ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit)=>{
+//         console.log("This is post approve id " + req.params.id);
+//             // Update each attribute with any possible attribute that may have been submitted in the body of the request
+//             // If that attribute isn't in the request body, default back to whatever it was before.
+//             projectSubmit.reject = true;
+//             projectSubmit.pending = false;
+
+//            // var emailArray = req.params.memberEmail;
+//            // var email = emailArray.toString();
+
+//            // console.log(email[0]);
+            
+            
+
+//             // Save the updated document back to the database
+//             projectSubmit.save((err, projectSubmit) => {
+//                 if (err) {
+//                     return res.status(500).send(err)
+//                     console.log("update error " + req.params.id);
+//                 }
+//                 req.flash('success', 'Rejected');
+//                 res.redirect('/proposals');
+//             });
+         
+//      });
+// });
+
+
+router.post('/proposals/:id/reject-message', (req, res, next) => {
+    var message = req.body.message;
+    
+    
+    ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit) => {
+        var emails = projectSubmit.memberEmail;
+        var projectName = req.params.projectName;
+
+            emails.forEach(function(email)
+            {
+                console.log(email);
+                
+                const html = `Dear Student,
+                <br/><br/>
+                ${message}
+                <br/>
+                All the best
+                <br/><br/><br/>
+                Regards,
+                <br/>                
+                Team Synergy`;
+                 
+                mailer.sendEmail('admin@synergy.com',email,'Your proposal has been rejected',html);
+               
+            });
             // Update each attribute with any possible attribute that may have been submitted in the body of the request
             // If that attribute isn't in the request body, default back to whatever it was before.
             projectSubmit.reject = true;
             projectSubmit.pending = false;
-            
+
+          
 
             // Save the updated document back to the database
             projectSubmit.save((err, projectSubmit) => {
