@@ -199,22 +199,27 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
             });
             // Update each attribute with any possible attribute that may have been submitted in the body of the request
             // If that attribute isn't in the request body, default back to whatever it was before.
-            projectSubmit.reject = true;
-            projectSubmit.pending = false;
+            // projectSubmit.reject = true;
+            // projectSubmit.pending = false;
 
           
 
-            // Save the updated document back to the database
-            projectSubmit.save((err, projectSubmit) => {
-                if (err) {
-                    return res.status(500).send(err)
-                    console.log("update error " + req.params.id);
-                }
-                req.flash('success', 'Rejected');
-                res.redirect('/proposals');
-            });
+            // // Save the updated document back to the database
+            // projectSubmit.save((err, projectSubmit) => {
+            //     if (err) {
+            //         return res.status(500).send(err)
+            //         console.log("update error " + req.params.id);
+            //     }
+            //     req.flash('success', 'Rejected');
+            //     res.redirect('/proposals');
+            // });
+            next();
             
          
+     });
+     ProjectSubmit.findOneAndRemove({_id : req.params.id}).then((projectSubmit) => {
+                req.flash('success', 'Rejected');
+                res.redirect('/proposals');
      });
 });
 
