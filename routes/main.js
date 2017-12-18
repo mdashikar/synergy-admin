@@ -58,8 +58,6 @@ router.get('/proposals', (req, res, next) => {
          }, (e) => {
              res.status(404).send(e);
          });
-        
-         
 
     }else{
         res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
@@ -215,6 +213,7 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
                 req.flash('success', 'Rejected');
                 res.redirect('/proposals');
             });
+            
          
      });
 });
@@ -272,4 +271,22 @@ router.post('/proposals/assign/:id', (req, res, next) => {
             }
          });
 });
+
+router.get('/supervisor-list', (req, res) => {
+    if(req.user){
+        
+                Supervisor.find().then((supervisors)=>{
+                    
+                    res.render('main/supervisor', {title: 'Synergy - Admin Dashboard', supervisors: supervisors, message: req.flash('success')});
+                    // res.render('proposalList', { title: 'Synergy Proposal List'});
+                     
+                 }, (e) => {
+                     res.status(404).send(e);
+                 });
+        
+            }else{
+                res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
+            }
+});
+
 module.exports = router;
