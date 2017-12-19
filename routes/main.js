@@ -201,13 +201,41 @@ router.post('/proposals/assign/:id', (req, res, next) => {
 });
 
 router.get('/supervisor-list', (req, res) => {
-    if(req.user){
-        
-                Supervisor.find().then((supervisors)=>{
+    if(req.user){        
+                    Supervisor.find().then((supervisors)=>{
+                    let projectMember = [];
+                    supervisors.forEach( function(i){
+                        console.log('Proposals under supervisor ' + i.name+': ' + i.proposals);
+                        projectMember.push(i.proposals);              
+                    });                 
+                    for(var i = 0; i<projectMember.length; i++){
+                        var array = projectMember[i];
+                        for(var j = 0; j < array.length; j++){
+                            console.log('Each Proposals id under supervisor', array[j]);
+                            ProjectSubmit.findById(array[j]).then((projectMembers) => {
+                                console.log(projectMembers._id);
+                                // let totalMembers = [];
+                                // for(let i = 0; i < projectMembers.length; i++){
+                                //     console.log(projectMembers[i]);
+                                //     totalMembers.push(i.memberId);
+                                // }
+                                // console.log(totalMembers);
+                                // // projectMembers.forEach( function(items){
+                                // //     //console.log(items);
+                                // //     totalMembers.push(items.memberId);
+                                // // });
+                                // console.log(totalMembers);
+                                // for(var x = 0; x< totalMembers.length; x++){
+                                //     var members = totalMembers[i];                                   
+                                // }
+                            });
+                            
+                        }
+                        console.log('Number of proposals ', array.length);
+                    }
+                    res.render('main/supervisor', {title: 'Synergy - Admin Dashboard', supervisors: supervisors, message: req.flash('success')});                        
                     
-                    res.render('main/supervisor', {title: 'Synergy - Admin Dashboard', supervisors: supervisors, message: req.flash('success')});
-                    // res.render('proposalList', { title: 'Synergy Proposal List'});
-                     
+
                  }, (e) => {
                      res.status(404).send(e);
                  });

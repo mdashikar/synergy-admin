@@ -23,20 +23,25 @@
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Assigned Proposals</th>
+                        <th>Total Members</th>
                         </tr>
                     </thead>
                    
                     <tbody>
                          {{#each supervisors}}
-                        <tr>
-                        <th scope="row">{{@index}}</th>
-                        <td>{{this.name}}</td>
-                        <td>{{this.email}}</td>
-                        <td>{{this.proposals.length}}</td>
-                        <td></td>
-                        </tr>
-                       
+                           
+                                <tr>
+                                <th scope="row">{{@index}}</th>
+                                <td>{{this.name}}</td>
+                                <td>{{this.email}}</td>
+                                <td>{{this.proposals.length}}</td>
+                                <td>
+                                </td>
+                                </tr>
+                           
                          {{/each}}
+
+                         
                     </tbody>
                     
                     </table>
