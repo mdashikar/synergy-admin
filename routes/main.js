@@ -79,20 +79,6 @@ router.get('/approved', (req, res, next) => {
     }
 });
 
-router.get('/rejected', (req, res, next) => {
-    if(req.user){
-        ProjectSubmit.find({'reject': 'true'}).then((projectSubmit)=>{
-            
-            res.render('main/tables', {title: 'Synergy - Admin Dashboard', projectSubmit: projectSubmit});
-            // res.render('proposalList', { title: 'Synergy Proposal List'});
-             
-         }, (e) => {
-             res.status(404).send(e);
-         });
-    }else{
-        res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
-    }
-});
 
 
 
@@ -141,35 +127,6 @@ router.get('/proposals/:id', (req, res, next) => {
     
     
 });
-
-// router.get('/proposals/:id/reject-message', (req, res, next) => {
-    
-//     ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit)=>{
-//         console.log("This is post approve id " + req.params.id);
-//             // Update each attribute with any possible attribute that may have been submitted in the body of the request
-//             // If that attribute isn't in the request body, default back to whatever it was before.
-//             projectSubmit.reject = true;
-//             projectSubmit.pending = false;
-
-//            // var emailArray = req.params.memberEmail;
-//            // var email = emailArray.toString();
-
-//            // console.log(email[0]);
-            
-            
-
-//             // Save the updated document back to the database
-//             projectSubmit.save((err, projectSubmit) => {
-//                 if (err) {
-//                     return res.status(500).send(err)
-//                     console.log("update error " + req.params.id);
-//                 }
-//                 req.flash('success', 'Rejected');
-//                 res.redirect('/proposals');
-//             });
-         
-//      });
-// });
 
 
 router.post('/proposals/:id/reject-message', (req, res, next) => {
@@ -223,30 +180,6 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
      });
 });
 
-
-router.get('/proposals/:id/postapprove', (req, res, next) => {
-    
-    ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit)=>{
-        console.log("This is postapprove id " + req.params.id);
-            // Update each attribute with any possible attribute that may have been submitted in the body of the request
-            // If that attribute isn't in the request body, default back to whatever it was before.
-            projectSubmit.approve = true;
-            projectSubmit.pending = false;
-            
-
-            // Save the updated document back to the database
-            projectSubmit.save((err, projectSubmit) => {
-                if (err) {
-                    return res.status(500).send(err)
-                    console.log("update error " + req.params.id);
-                }
-                req.flash('success', 'Approved');
-                res.redirect('/proposals');
-            });
-         
-     });
-});
-
 router.post('/proposals/assign/:id', (req, res, next) => {
     // console.log('IDDDD ', + req.params.id);
     // Supervisor.findOne({"name" : req.body.name}).then((supervisor)=> {
@@ -272,8 +205,24 @@ router.post('/proposals/assign/:id', (req, res, next) => {
                return res.send(err);
             }else{
                 req.flash('success', 'Assigned Successfully');
-                res.redirect('/approved');
+                res.redirect('/proposals');
             }
+         });
+         ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit)=>{
+            console.log("This is postapprove id " + req.params.id);
+                // Update each attribute with any possible attribute that may have been submitted in the body of the request
+                // If that attribute isn't in the request body, default back to whatever it was before.
+                projectSubmit.pending = false;
+                
+    
+                // Save the updated document back to the database
+                projectSubmit.save((err, projectSubmit) => {
+                    if (err) {
+                        return res.status(500).send(err)
+                        console.log("update error " + req.params.id);
+                    }
+                });
+             
          });
 });
 

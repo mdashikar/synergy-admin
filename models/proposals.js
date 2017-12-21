@@ -61,14 +61,6 @@ var ProjectSubmit = mongoose.model('ProjectSubmit', {
     pending:{
         type: Boolean,
         default: true
-    },
-    approve:{
-        type: Boolean,
-        default: false
-    },
-    reject:{
-        type: Boolean,
-        default: false
     }
     // _creator: {
     //     type: mongoose.Schema.Types.ObjectId,
