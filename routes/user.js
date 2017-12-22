@@ -151,4 +151,44 @@ router.post('/invite-supervisor', (req,res) => {
 });
 
 
+//Forgot password
+
+router.post('/forgot-password', (req,res) => {
+    
+    User.findOne({email : req.body.emailForgot}).then((user) => {
+        console.log(user._id);
+        const html = `Hi there
+        <br/>
+        To reset your password please click on the following link.
+        <br/><br/>
+        
+        
+        
+        <a href="http://localhost:3000/reset-password/${user._id}">http://localhost:3000/reset-password/${user._id}</a>
+        
+        <br/><br/>
+        Have a good day!`;
+        
+    
+      
+
+        mailer.sendEmail('admin@synergy.com',req.body.emailForgot,'Reset password',html);
+        res.redirect('/');
+        req.flash('errors', 'Check your email');
+    })
+  
+     
+
+});
+
+//reset password
+router.get('/reset-password/:id',(req,res,next) => {
+    res.render('accounts/reset-password');
+});
+
+router.post('/reset-password/:id', (req,res) => {   
+
+});
+
+
 module.exports = router;
