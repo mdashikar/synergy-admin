@@ -1,5 +1,3 @@
-//import { ObjectID } from './C:/Users/Test/AppData/Local/Microsoft/TypeScript/2.6/node_modules/@types/bson';
-
 const router = require('express').Router();
 const User = require('../models/user');
 const Supervisor = require('../models/supervisor');
@@ -9,6 +7,7 @@ var template = require('../server/template');
 var upload = require('../server/upload');
 const async = require('async');
 const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 const mailer = require('../misc/mailer');
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -63,24 +62,6 @@ router.get('/proposals', (req, res, next) => {
         res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
     }
 });
-router.get('/approved', (req, res, next) => {
-    if(req.user){
-        ProjectSubmit.find({'approve': 'true'}).then((projectSubmit)=>{
-            
-            res.render('main/tables', {title: 'Synergy - Admin Dashboard', projectSubmit: projectSubmit});
-            // res.render('proposalList', { title: 'Synergy Proposal List'});
-             
-         }, (e) => {
-             res.status(404).send(e);
-         });
-        
-    }else{
-        res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
-    }
-});
-
-
-
 
 router.get('/registered_user', (req, res, next) => {
     if(req.user){
@@ -90,19 +71,13 @@ router.get('/registered_user', (req, res, next) => {
     }
 });
 
-
-
-
 router.get('/template', template.get);
 
 router.post('/registered_user', upload.post);
 
 router.get('/proposals/:id', (req, res, next) => {
-    
-        console.log("object id" + req.params.id);
-        var id = req.params.id;
         
-        ProjectSubmit.findById(id).then((projectSubmit)=>{
+        ProjectSubmit.findById(req.params.id).then((projectSubmit)=>{
             //res.render('main/proposal-des', {title: req.params.projectName, projectSubmit: projectSubmit});
             Supervisor.find({}).then((supervisor) =>{
                 res.render('main/proposal-des', {title: 'Synergy - Admin Dashboard',projectSubmit: projectSubmit, supervisor: supervisor});        
@@ -111,28 +86,12 @@ router.get('/proposals/:id', (req, res, next) => {
          }, (e) => {
             return res.status(404).send(e);
          });
-        //  ProjectSubmit.find({'approve': 'true'}).then((projectSubmit)=>{
-            
-        //     Supervisor.find({}).then((supervisor) =>{
-        //         res.render('main/proposal-des', {title: 'Synergy - Admin Dashboard', supervisor: supervisor});        
-        //      });
-             
-        //  }, (e) => {
-        //      res.status(404).send(e);
-        //  });
-         
-        // if (id.match(/^[0-9a-fA-F]{24}$/)) {
-        //    //Yes, it's a valid ObjectId, proceed with `findById` call.
-        // }
-    
     
 });
 
 
 router.post('/proposals/:id/reject-message', (req, res, next) => {
     var message = req.body.message;
-    
-    
     ProjectSubmit.findOne({_id : req.params.id}).then((projectSubmit) => {
         var emails = projectSubmit.memberEmail;
         var projectName = req.params.projectName;
@@ -269,6 +228,29 @@ router.get('/supervisor-list', (req, res) => {
             }else{
                 res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
             }
+});
+router.get('/supervisor-list/:id', (req,res) => {
+    Supervisor.find({'_id': req.params.id}).then((proposals) => {
+        let totalProposals = [];
+        let proposal = [];
+        proposals.forEach(function (items){
+            totalProposals.push(items.proposals);
+        });
+        for(let i = 0; i<totalProposals.length; i++){
+            let singleProposals = totalProposals[i];
+            for(let j = 0; j<singleProposals.length;j++){
+                ProjectSubmit.find({'_id': singleProposals[j]}).then((docs) => {                    
+                    docs.forEach(function(i){
+                        proposal.push(i);
+                    });
+                    console.log(proposal);
+                });
+                
+            }
+        }
+        res.render('main/tables', {title: 'Single Proposal', proposal:proposal});
+        
+    });
 });
 
 module.exports = router;
