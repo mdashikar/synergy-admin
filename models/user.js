@@ -9,7 +9,8 @@ const UserSchema = new Schema ({
     name: String,
     password: String,
     username: {type: String, unique: true, lowercase:true},
-    secretToken : {type: String}
+    secretToken : {type: String},
+    resetPasswordToken : {type : String}
 });
 
 

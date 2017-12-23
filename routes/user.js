@@ -5,12 +5,14 @@ const passportConfig = require('../config/passport');
 const User = require('../models/user');
 const mailer = require('../misc/mailer');
 const Invite = require('../models/invite');
+var async = require('async');
+var crypto = require('crypto');
 
 var value = "hi";
 
 router.route('/signup')
     .get( (req, res, next) => {
-        res.render('accounts/signup', {message : req.flash('errors')});
+        res.render('accounts/signup', {message1 : req.flash('errors')});
     })
     .post((req, res, next) => 
     {
@@ -61,6 +63,7 @@ router.route('/')
     .get( (req, res, next) => {
         if(req.user) res.redirect('/');
         res.render('accounts/login', {message: req.flash('loginMessage')});
+       // res.render('accounts/login');
     })
     .post(passport.authenticate('local-login', {
         successRedirect: '/',
@@ -68,38 +71,13 @@ router.route('/')
         failureFlash: true
     }));
 
+
 router.get('/user-logout', (req,res, next) => {
     req.logout();
     res.redirect('/');
 });
 
-//Invite students
 
-// router.post('/invite-supervisor', (req,res) => {
-//     const email = req.body.invite_email;
-//     const secretToken = randomstring.generate();
-//   //  console.log('Email :',email);
-
-//     //Composing email
-//     const html = `Hi there
-//     <br/>
-//     To get registered please click on the following link.
-//     <br/><br/>
-//     Token : ${secretToken}
-//     <br/><br/>
-    
-//     <a href="http://localhost:3000/signup/${secretToken}">http://localhost:3000/signup/${secretToken}</a>
-    
-//     <br/><br/>
-//     Have a good day!`;
-   
-//     //<a href="http://localhost:3000/users/verify/${secretToken}">p</a>
-
-//     mailer.sendEmail('admin@teamfly.com',email,'Please signup through this link',html);
-//     req.flash('success','An invitation email sent to '+email);
-//     res.redirect('/');
-
-// });
 
 router.post('/invite-supervisor', (req,res) => {
     
@@ -153,42 +131,126 @@ router.post('/invite-supervisor', (req,res) => {
 
 //Forgot password
 
-router.post('/forgot-password', (req,res) => {
-    
-    User.findOne({email : req.body.emailForgot}).then((user) => {
-        console.log(user._id);
-        const html = `Hi there
-        <br/>
-        To reset your password please click on the following link.
-        <br/><br/>
-        
-        
-        
-        <a href="http://localhost:3000/reset-password/${user._id}">http://localhost:3000/reset-password/${user._id}</a>
-        
-        <br/><br/>
-        Have a good day!`;
+
+
+router.post('/forgot-password', function(req, res, next) {
+    async.waterfall([
+      function(done) {
+        crypto.randomBytes(20, function(err, buf) {
+          var token = buf.toString('hex');
+          done(err, token);
+        });
+      },
+      function(token, done) {
+        User.findOne({ email: req.body.emailForgot }, function(err, user) {
+          if (!user) {
+            req.flash('errors', 'No account with that email address exists.');
+            return res.redirect('/');
+          }
+  
+          user.resetPasswordToken = token;
+         // user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  
+          user.save(function(err) {
+            done(err, token, user);
+          });
+        });
+      },
+      function(token, user, done) {
+        const html = 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+        'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+        'http://' + req.headers.host + '/reset-password/' + token + '\n\n' +
+        'If you did not request this, please ignore this email and your password will remain unchanged.\n'
         
     
       
 
         mailer.sendEmail('admin@synergy.com',req.body.emailForgot,'Reset password',html);
         res.redirect('/');
-        req.flash('errors', 'Check your email');
-    })
-  
-     
+        req.flash('loginMessage', 'Check your email');
 
-});
+        
+      }
+    ], function(err) {
+      if (err) return next(err);
+      res.redirect('/');
+    });
+  });
 
 //reset password
-router.get('/reset-password/:id',(req,res,next) => {
-    res.render('accounts/reset-password');
-});
 
-router.post('/reset-password/:id', (req,res) => {   
+// router.get('/reset-password',(req,res,next) => {
+//     res.render('accounts/reset-password');
+// });
 
-});
+router.get('/reset-password/:token', function(req, res) {
+    // User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+    User.findOne({resetPasswordToken:req.params.token}, function(err, user) {
+        
+      if (!user) {
+        req.flash('errors', 'Password reset token is invalid or has expired.');
+       // console.log("inside reset password get");
+        return res.redirect('/');
+      }
+      res.render('accounts/reset-password', {
+        user: user
+      });
+   
+    });
+  });
+router.post('/reset-password/:token', function(req, res) {
+    async.waterfall([
+      function(done) {
+       // User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+        User.findOne({resetPasswordToken: req.params.token}, function(err, user) {
+          if (!user) {
+            req.flash('errors', 'Password reset token is invalid or has expired.');
+            return res.redirect('/');
+          }
+  
+          user.password = req.body.password;
+          user.resetPasswordToken = undefined;
+        //  user.resetPasswordExpires = undefined;
+  
+          user.save(function(err) {
+            req.logIn(user, function(err) {
+              done(err, user);
+            });
+          });
+        });
+      },
+      function(user, done) {
+        const html = 'Hello,\n\n' +
+        'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+        
+        mailer.sendEmail('admin@synergy.com',user.email,'Password change confirmation',html);
+        res.redirect('/');
+        
+      }
+    ], function(err) {
+      res.redirect('/');
+    });
+  });
+
+
+// router.post('/reset-password', (req,res,next) => {  
+//     var emailReset = req.body.emailForgot; 
+//     var resetPassword = req.body.password;
+//     // User.findOne({email : emailReset}).then((user) => {
+//     //     user.password = password;
+//     //     user.save();
+//     //     res.redirect('/');
+
+//     // })
+//     User.findOneAndUpdate({email : emailReset}, {
+       
+//         password : resetPassword
+//     }).then((user) => {
+//         console.log(emailReset);
+//         res.redirect('/'); 
+//     })
+
+// });
 
 
 module.exports = router;

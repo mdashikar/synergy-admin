@@ -198,7 +198,7 @@ router.get('/supervisor-list', (req, res) => {
                     for(var i = 0; i<projectMember.length; i++){
                         var array = projectMember[i];
                         for(var j = 0; j < array.length; j++){
-                            console.log('Each Proposals id under supervisor', array[j]);
+                            console.log('Each Proposals id under supervisor : ', array[j]);
                             ProjectSubmit.findById(array[j]).then((projectMembers) => {
                                 console.log(projectMembers._id);
                                 // let totalMembers = [];
