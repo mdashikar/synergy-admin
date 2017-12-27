@@ -9,25 +9,55 @@ const async = require('async');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 const mailer = require('../misc/mailer');
+const passport = require('passport');
+const randomstring = require('randomstring');
+const passportConfig = require('../config/passport');
 var ObjectId = mongoose.Types.ObjectId;
 
 
-router.get('/', (req, res, next) => {
-    if(req.user){
-        ProjectSubmit.find().then((projectSubmit)=>{
+// router.get('/', (req, res, next) => {
+//     if(req.user){
+//         ProjectSubmit.find().then((projectSubmit)=>{
             
-            res.render('main/index', {title: 'Synergy - Admin Dashboard', projectSubmit: projectSubmit});
-            // res.render('proposalList', { title: 'Synergy Proposal List'});
+//             res.render('main/index', {title: 'Synergy - Admin Dashboard', 
+//             projectSubmit: projectSubmit,message: req.flash('errors')});
+//             // res.render('proposalList', { title: 'Synergy Proposal List'});
              
-         }, (e) => {
-             res.status(404).send(e);
-         });
+//          }, (e) => {
+//              res.status(404).send(e);
+//          });
 
-    }else{
-        res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
-    }
+//     }else{
+//         res.render('accounts/login', {title: 'Synergy - Admin Dashboard',message: req.flash('errors')});
+//     }
     
-});
+// });
+router.route('/')
+    .get( (req, res, next) => {
+        if(req.user){
+            ProjectSubmit.find().then((projectSubmit)=>{
+                
+                res.render('main/index', {title: 'Synergy - Admin Dashboard', 
+                projectSubmit: projectSubmit,errorMessage: req.flash('errors'),successMessage: req.flash('success')});
+                // res.render('proposalList', { title: 'Synergy Proposal List'});
+                 
+             }, (e) => {
+                 res.status(404).send(e);
+             });
+    
+        }else{
+            res.render('accounts/login', {title: 'Synergy - Admin Dashboard',
+            errorMessage: req.flash('errors'),successMessage: req.flash('success')});
+        }
+        
+    })
+    .post(passport.authenticate('local-login', {
+        successRedirect: '/',
+        failureRedirect: '/',
+        failureFlash: true
+    }));
+
+
 router.get('/supervisors', (req, res, next) => {
     if(req.user){
         Supervisor.find({}).then((supervisor)=>{

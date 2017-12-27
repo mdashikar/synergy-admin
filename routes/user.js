@@ -12,7 +12,7 @@ var value = "hi";
 
 router.route('/signup')
     .get( (req, res, next) => {
-        res.render('accounts/signup', {message1 : req.flash('errors')});
+        res.render('accounts/signup', {errorMessage : req.flash('errors')});
     })
     .post((req, res, next) => 
     {
@@ -59,17 +59,7 @@ router.route('/signup')
 
     });
 
-router.route('/')
-    .get( (req, res, next) => {
-        if(req.user) res.redirect('/');
-        res.render('accounts/login', {message: req.flash('loginMessage')});
-       // res.render('accounts/login');
-    })
-    .post(passport.authenticate('local-login', {
-        successRedirect: '/',
-        failureRedirect: '/',
-        failureFlash: true
-    }));
+
 
 
 router.get('/user-logout', (req,res, next) => {
@@ -101,22 +91,33 @@ router.post('/invite-supervisor', (req,res) => {
                     if(err) return next(err);
                     //res.redirect('/');
                     //Composing email
-                    const html = `Hi there
-                    <br/>
-                    To get registered please click on the following link.
-                    <br/><br/>
-                    Token : ${secretToken}
-                    <br/><br/>
+                    // const html = `Hi there
+                    // <br/>
+                    // To get registered please click on the following link.
+                    // <br/><br/>
+                    // Token : ${secretToken}
+                    // <br/><br/>
                     
-                    <a href="https://s-supervisor.herokuapp.com/signup-supervisor/${secretToken}">https://s-supervisor.herokuapp.com/signup-supervisor/${secretToken}</a>
+                    // <a href="https://s-supervisor.herokuapp.com/signup-supervisor/${secretToken}">https://s-supervisor.herokuapp.com/signup-supervisor/${secretToken}</a>
                     
-                    <br/><br/>
-                    Have a good day!`;
+                    // <br/><br/>
+                    // Have a good day!`;
+                    const html = 'Hi there,\n\n\n' +
+                    'This is a supervisor invitation from CSE department of Leading University to supervise third year and final year project.\n\n' +
+                    'To register as a supervisor please go through the following link.\n\n' +
+                    'http://' + req.headers.host + '/signup-supervisor/' + secretToken + '\n\n\n' +
+                                        
+                    'Have a good day!\n\n\n\n\n' +
+                    'Regards,\n' +
+                    'Minhazul Haque Riad\n' +
+                    'Senior Lecturer and Project Convenor\n' +
+                    'CSE deapartment,Leading University,Sylhet';
                     
                 
                   
         
                     mailer.sendEmail('admin@synergy.com',email,'Please signup through this link',html);
+                    req.flash('success', 'Invitation sent');
                     res.redirect('/');
                 
             });
@@ -149,7 +150,7 @@ router.post('/forgot-password', function(req, res, next) {
           }
   
           user.resetPasswordToken = token;
-         // user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+          user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
   
           user.save(function(err) {
             done(err, token, user);
@@ -160,14 +161,15 @@ router.post('/forgot-password', function(req, res, next) {
         const html = 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
         'http://' + req.headers.host + '/reset-password/' + token + '\n\n' +
-        'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+        'If you did not request this, please ignore this email and your password will remain unchanged.\n';
         
     
       
 
         mailer.sendEmail('admin@synergy.com',req.body.emailForgot,'Reset password',html);
+       
+        req.flash('success', 'A reset-password mail has been sent to your email address.Check it out!');
         res.redirect('/');
-        req.flash('loginMessage', 'Check your email');
 
         
       }
@@ -179,16 +181,13 @@ router.post('/forgot-password', function(req, res, next) {
 
 //reset password
 
-// router.get('/reset-password',(req,res,next) => {
-//     res.render('accounts/reset-password');
-// });
 
 router.get('/reset-password/:token', function(req, res) {
-    // User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
-    User.findOne({resetPasswordToken:req.params.token}, function(err, user) {
+     User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+    //User.findOne({resetPasswordToken:req.params.token}, function(err, user) {
         
       if (!user) {
-        req.flash('errors', 'Password reset token is invalid or has expired.');
+        req.flash('errors', 'No user with this email');
        // console.log("inside reset password get");
         return res.redirect('/');
       }
@@ -201,8 +200,8 @@ router.get('/reset-password/:token', function(req, res) {
 router.post('/reset-password/:token', function(req, res) {
     async.waterfall([
       function(done) {
-       // User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
-        User.findOne({resetPasswordToken: req.params.token}, function(err, user) {
+        User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+      //  User.findOne({resetPasswordToken: req.params.token}, function(err, user) {
           if (!user) {
             req.flash('errors', 'Password reset token is invalid or has expired.');
             return res.redirect('/');
@@ -210,7 +209,7 @@ router.post('/reset-password/:token', function(req, res) {
   
           user.password = req.body.password;
           user.resetPasswordToken = undefined;
-        //  user.resetPasswordExpires = undefined;
+          user.resetPasswordExpires = undefined;
   
           user.save(function(err) {
             req.logIn(user, function(err) {
@@ -233,24 +232,6 @@ router.post('/reset-password/:token', function(req, res) {
   });
 
 
-// router.post('/reset-password', (req,res,next) => {  
-//     var emailReset = req.body.emailForgot; 
-//     var resetPassword = req.body.password;
-//     // User.findOne({email : emailReset}).then((user) => {
-//     //     user.password = password;
-//     //     user.save();
-//     //     res.redirect('/');
-
-//     // })
-//     User.findOneAndUpdate({email : emailReset}, {
-       
-//         password : resetPassword
-//     }).then((user) => {
-//         console.log(emailReset);
-//         res.redirect('/'); 
-//     })
-
-// });
 
 
 module.exports = router;

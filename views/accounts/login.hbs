@@ -13,30 +13,32 @@
                 </div>
               </div>
             </div>
+            
             <!-- Form Panel    -->
             <div class="col-lg-6 bg-white">
               <div class="form d-flex align-items-center">
-                {{#if message}}
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Some Error</strong> {{ message}}
+                
+
+                <div class="content">
+                  {{#if errorMessage}}
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                          <strong>Some Error</strong> {{ errorMessage}}
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+
+                  {{/if}}
+                
+                {{#if successMessage}}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Well done! </strong> {{ successMessage}}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
 
                 {{/if}}
-                
-                {{!-- {{#if message}}
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong>Well done! </strong> {{ message}}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                {{/if}} --}}
-
-                <div class="content">
                   <form id="login-form" method="post">
                     <div class="form-group">
                       <input id="login-username" type="text" name="username" required="" class="input-material">

@@ -6,19 +6,29 @@
               <h2 class="no-margin-bottom">Dashboard</h2>
             </div>
           </header>
-          <!-- Dashboard Counts Section-->
-          <section class="dashboard-counts no-padding-bottom">
-            <div class="container-fluid">
-              <div class="row bg-white has-shadow">
-                 {{#if message}}
+           {{#if errorMessage}}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Some Error</strong> {{ message}}
+                        <strong>Some Error</strong> {{ errorMessage}}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
 
                 {{/if}}
+                {{#if successMessage}}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Well done! </strong> {{ successMessage}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                {{/if}}
+          <!-- Dashboard Counts Section-->
+          <section class="dashboard-counts no-padding-bottom">
+            <div class="container-fluid">
+              <div class="row bg-white has-shadow">
+                
                 <!-- Item -->
                 <div class="col-xl-3 col-sm-6">
                   <div class="item d-flex align-items-center">

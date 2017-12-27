@@ -23,7 +23,8 @@ passport.use('local-login', new LocalStrategy({
         if(!user)
         {
             console.log('No such user');
-            return done(null, false, req.flash('loginMessage', 'Opss! No user found.'));
+            return done(null, false, req.flash('errors', 'Opss! No user found.'));
+           // return done(null, false, req.flash('error_messages', 'Opss! No user found.'));
             
         }
         //return done(null,false, {message:'Opss! No user found.'}); 
@@ -32,7 +33,8 @@ passport.use('local-login', new LocalStrategy({
         {
              //return done(null,false, {message:'Opss! Wrong password.'});
              console.log('wrong password');
-             return done(null, false, req.flash('loginMessage', 'Opss! Wrong password.'));
+             return done(null, false, req.flash('errors', 'Opss! Wrong password.'));
+            //return done(null, false, req.flash('error_messages', 'Opss! Wrong password.'));
         }
        
 
