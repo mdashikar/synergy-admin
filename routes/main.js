@@ -139,20 +139,6 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
 });
 
 router.post('/proposals/assign/:id', (req, res, next) => {
-    // console.log('IDDDD ', + req.params.id);
-    // Supervisor.findOne({"name" : req.body.name}).then((supervisor)=> {
-    //     supervisor.proposals.push = req.params.id;
-    //     console.log(req.params.id);
-    //     supervisor.save((err, supervisor) => {
-    //         if (err) {
-    //             return res.status(500).send(err)
-    //             console.log("update error " + req.params.id);
-    //         }
-    //         req.flash('success', 'Assigned Successfully');
-    //         res.redirect('/proposals');
-    //     });
-
-    //  }
      Supervisor.findOneAndUpdate(
         {"name": req.body.name},
         { $push: {"proposals": req.params.id}},
