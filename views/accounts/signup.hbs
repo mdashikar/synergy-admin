@@ -17,15 +17,16 @@
             <div class="col-lg-6 bg-white">
               <div class="form d-flex align-items-center">
                 <div class="content">
-                  {{#if message}}
+                  {{#if errorMessage}}
                       <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                          <strong>Some Error</strong> {{ message}}
+                          <strong>Some Error</strong> {{ errorMessage}}
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                           </button>
                       </div>
 
                   {{/if}}
+                  
                   <form id="register-form" method="POST">
                     <div class="form-group">
                       <input id="register-username" type="text" name="name" required class="input-material">
