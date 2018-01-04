@@ -17,9 +17,7 @@ exports.post = function (req, res) {
      })
      .on("data", function(data){
          data['_id'] = new mongoose.Types.ObjectId();
-          
          registered.push(data);
-         
      })
      .on("end", function(){
         RegisteredStudent.create(registered, function(err, documents) {
