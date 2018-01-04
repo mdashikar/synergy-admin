@@ -135,7 +135,7 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
             mailer.sendEmail('admin@synergy.com', email, 'Your proposal has been rejected', html);
 
         });
-        
+
         next();
 
 
@@ -149,26 +149,23 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
 
 //Removing supervisors from admin
 router.get('/remove-supervisor/:email', (req, res, next) => {
-    Invite.findOneAndRemove({email : req.params.email}).then((invite) => {
+    Invite.findOneAndRemove({ email: req.params.email }).then((invite) => {
         next();
     });
-    Supervisor.findOneAndRemove({email: req.params.email}).then((supervisor) => {
+    Supervisor.findOneAndRemove({ email: req.params.email }).then((supervisor) => {
         res.redirect('/remove-supervisors');
-    });    
+    });
 });
 
 
 
 router.post('/proposals/assign/:id', (req, res, next) => {
-     Supervisor.findOneAndUpdate(
-        {"name": req.body.name},
-        { $push: {"proposals": req.params.id}},
-        {  safe: true, upsert: true},
-          function(err, supervisor) {
-            if(err){
-               console.log(err);
-               return res.send(err);
-            }else{
+    Supervisor.findOneAndUpdate({ "name": req.body.name }, { $push: { "proposals": req.params.id } }, { safe: true, upsert: true },
+        function(err, supervisor) {
+            if (err) {
+                console.log(err);
+                return res.send(err);
+            } else {
                 req.flash('success', 'Assigned Successfully');
                 res.redirect('/proposals');
             }
@@ -179,59 +176,61 @@ router.post('/proposals/assign/:id', (req, res, next) => {
         // If that attribute isn't in the request body, default back to whatever it was before.
         projectSubmit.pending = false;
         projectSubmit.save((err, projectSubmit) => {
-            if(err){
+            if (err) {
                 return res.status(500).send(err);
             }
         });
-    
+
     });
 });
-router.get('/supervisor-list', async (req, res) => {
-    if(req.user){        
-                    Supervisor.find().then((supervisors) => {
-                    let projectMember = [];
-                    supervisors.forEach( function(i){
-                        //console.log('Proposals under supervisor ' + i.name+': ' + i.proposals);
-                        projectMember.push(i.proposals); 
-                    }); 
-                   
-                    async function newArr(arr){
-                        //var results = '';
-                        var countArr = [];
-                        for(var i = 0; i<arr.length; i++){
-                            var array = arr[i];
-                            var count = 0;
-                            for(var j = 0; j < array.length; j++){
-                                //console.log('Each Proposals id under supervisor', array[j]);
-                                await ProjectSubmit.findById(array[j] , function(err, result){
-                                    if(err) return err
-                                   //results +=  result.memberId.length;
-                                   count += result.memberId.length;
-                                });
-                            }
-                            console.log(count);
-                            countArr.push(count);
-                            count = 0;
-                        }
-                        
-                        console.log('Blocking');
-                        res.render('main/supervisor', {title: 'Synergy - Admin Dashboard', supervisors: supervisors, countArr:countArr, message: req.flash('success')}); 
-                    }
-    
-                    newArr(projectMember);
-                    
-                    
-                  
-                                           
-                    
+router.get('/supervisor-list', (req, res) => {
+    if (req.user) {
+        Supervisor.find().then((supervisors) => {
+            let projectMember = [];
+            supervisors.forEach(function(i) {
+                //console.log('Proposals under supervisor ' + i.name+': ' + i.proposals);
+                projectMember.push(i.proposals);
+            });
 
-                 }, (e) => {
-                     res.status(404).send(e);
-                 });
-        
-            }else{
-                res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
+            async function newArr(arr) {
+                //var results = '';
+                const countArr = [];
+                for (var i = 0; i < arr.length; i++) {
+                    var array = arr[i];
+                    var count = 0;
+                    for (var j = 0; j < array.length; j++) {
+                        //console.log('Each Proposals id under supervisor', array[j]);
+                        await ProjectSubmit.findById(array[j], function(err, result) {
+                            if (err) return err
+                                //results +=  result.memberId.length;
+                            count += result.memberId.length;
+                        });
+                    }
+                    console.log(count);
+                    supervisors[i]['__v'] = count;
+                    count = 0;
+
+                }
+                console.log(supervisors);
+
+                console.log('Blocking');
+                res.render('main/supervisor', { title: 'Synergy - Admin Dashboard', supervisors: supervisors, message: req.flash('success') });
             }
+
+            newArr(projectMember);
+
+
+
+
+
+
+        }, (e) => {
+            res.status(404).send(e);
+        });
+
+    } else {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
 });
 // router.get('/supervisor-list', (req, res) => {
 //     if (req.user) {
@@ -243,10 +242,10 @@ router.get('/supervisor-list', async (req, res) => {
 //                 });
 //             });
 //         }
-        
+
 //         let fetchProposal = function(docs){
 //             return new Promise(function(resolve, reject) {
-                
+
 //             });
 //         } 
 //         let fetchMembers = function(docs){
@@ -268,7 +267,7 @@ router.get('/supervisor-list', async (req, res) => {
 
 
 router.get('/supervisor-list/:id', (req, res, next) => {
-    if(req.user){
+    if (req.user) {
         async function getResult() {
             let result = await Supervisor.find({ '_id': req.params.id });
             let proposals = result[0];
@@ -283,9 +282,9 @@ router.get('/supervisor-list/:id', (req, res, next) => {
             //console.log(proposal);
         }
         getResult();
-    }else{
+    } else {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
- }
+    }
 });
 
 module.exports = router;
