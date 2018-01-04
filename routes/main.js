@@ -50,12 +50,12 @@ router.route('/')
     }));
 
 
-router.get('/supervisors', (req, res, next) => {
+router.get('/remove-supervisors', (req, res, next) => {
     if (req.user) {
-        Supervisor.find({}).then((supervisor) => {
+        Supervisor.find({}).then((remove_supervisor) => {
             // let len = supervisor.proposals.lenth();
             // console.log('lenthhh', len);
-            res.render('main/supervisor', { title: 'Synergy - Admin Dashboard', supervisor: supervisor, successMessage: req.flash('success') });
+            res.render('main/supervisor', { title: 'Synergy - Admin Dashboard', remove_supervisor: remove_supervisor, successMessage: req.flash('success') });
             // res.render('proposalList', { title: 'Synergy Proposal List'});
 
         }, (e) => {
@@ -68,6 +68,8 @@ router.get('/supervisors', (req, res, next) => {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
     }
 });
+
+
 router.get('/proposals', (req, res, next) => {
     if (req.user) {
 
@@ -151,7 +153,7 @@ router.get('/remove-supervisor/:email', (req, res, next) => {
         next();
     });
     Supervisor.findOneAndRemove({email: req.params.email}).then((supervisor) => {
-        res.redirect('/supervisor-list');
+        res.redirect('/remove-supervisors');
     });    
 });
 
