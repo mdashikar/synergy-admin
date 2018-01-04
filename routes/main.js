@@ -12,26 +12,11 @@ const mailer = require('../misc/mailer');
 const passport = require('passport');
 const randomstring = require('randomstring');
 const passportConfig = require('../config/passport');
+const Invite = require('../models/invite');
 var ObjectId = mongoose.Types.ObjectId;
 
 
-// router.get('/', (req, res, next) => {
-//     if(req.user){
-//         ProjectSubmit.find().then((projectSubmit)=>{
 
-//             res.render('main/index', {title: 'Synergy - Admin Dashboard', 
-//             projectSubmit: projectSubmit,message: req.flash('errors')});
-//             // res.render('proposalList', { title: 'Synergy Proposal List'});
-
-//          }, (e) => {
-//              res.status(404).send(e);
-//          });
-
-//     }else{
-//         res.render('accounts/login', {title: 'Synergy - Admin Dashboard',message: req.flash('errors')});
-//     }
-
-// });
 router.route('/')
     .get((req, res, next) => {
         if (req.user) {
@@ -70,7 +55,7 @@ router.get('/supervisors', (req, res, next) => {
         Supervisor.find({}).then((supervisor) => {
             // let len = supervisor.proposals.lenth();
             // console.log('lenthhh', len);
-            res.render('main/supervisor', { title: 'Synergy - Admin Dashboard', supervisor: supervisor, message: req.flash('success') });
+            res.render('main/supervisor', { title: 'Synergy - Admin Dashboard', supervisor: supervisor, successMessage: req.flash('success') });
             // res.render('proposalList', { title: 'Synergy Proposal List'});
 
         }, (e) => {
@@ -148,22 +133,7 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
             mailer.sendEmail('admin@synergy.com', email, 'Your proposal has been rejected', html);
 
         });
-        // Update each attribute with any possible attribute that may have been submitted in the body of the request
-        // If that attribute isn't in the request body, default back to whatever it was before.
-        // projectSubmit.reject = true;
-        // projectSubmit.pending = false;
-
-
-
-        // // Save the updated document back to the database
-        // projectSubmit.save((err, projectSubmit) => {
-        //     if (err) {
-        //         return res.status(500).send(err)
-        //         console.log("update error " + req.params.id);
-        //     }
-        //     req.flash('success', 'Rejected');
-        //     res.redirect('/proposals');
-        // });
+        
         next();
 
 
@@ -172,6 +142,17 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
         req.flash('success', 'Rejected');
         res.redirect('/proposals');
     });
+});
+
+
+//Removing supervisors from admin
+router.get('/remove-supervisor/:email', (req, res, next) => {
+    Invite.findOneAndRemove({email : req.params.email}).then((invite) => {
+        next();
+    });
+    Supervisor.findOneAndRemove({email: req.params.email}).then((supervisor) => {
+        res.redirect('/supervisor-list');
+    });    
 });
 
 

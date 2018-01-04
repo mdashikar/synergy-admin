@@ -7,6 +7,7 @@ const mailer = require('../misc/mailer');
 const Invite = require('../models/invite');
 var async = require('async');
 var crypto = require('crypto');
+const Supervisor = require('../models/supervisor');
 
 var value = "hi";
 
@@ -69,11 +70,11 @@ router.get('/user-logout', (req,res, next) => {
 
 
 
-router.post('/invite-supervisor', (req,res) => {
+router.post('/invite-supervisor', (req,res,next) => {
     
     var secretToken = randomstring.generate();
     
-
+      
     Invite.findOne({email: req.body.invite_email}, function(err, existingUser){
         console.log("inside invite");
         if(existingUser){
@@ -89,23 +90,11 @@ router.post('/invite-supervisor', (req,res) => {
             invite.save(function(err){
                 
                     if(err) return next(err);
-                    //res.redirect('/');
-                    //Composing email
-                    // const html = `Hi there
-                    // <br/>
-                    // To get registered please click on the following link.
-                    // <br/><br/>
-                    // Token : ${secretToken}
-                    // <br/><br/>
                     
-                    // <a href="https://s-supervisor.herokuapp.com/signup-supervisor/${secretToken}">https://s-supervisor.herokuapp.com/signup-supervisor/${secretToken}</a>
-                    
-                    // <br/><br/>
-                    // Have a good day!`;
                     const html = 'Hi there,\n\n\n' +
                     'This is a supervisor invitation from CSE department of Leading University to supervise third year and final year project.\n\n' +
                     'To register as a supervisor please go through the following link.\n\n' +
-                    'http://' + req.headers.host + '/signup-supervisor/' + secretToken + '\n\n\n' +
+                    'http://' + 's-supervisor.herokuapp.com' + '/signup-supervisor/' + secretToken + '\n\n\n' +
                                         
                     'Have a good day!\n\n\n\n\n' +
                     'Regards,\n' +
