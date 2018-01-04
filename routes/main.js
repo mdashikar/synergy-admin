@@ -203,68 +203,85 @@ router.post('/proposals/assign/:id', (req, res, next) => {
     
     });
 });
-// router.get('/supervisor-list', (req, res) => {
-//     if(req.user){        
-//                     Supervisor.find().then((supervisors) => {
-//                     let projectMember = [];
-//                     supervisors.forEach( function(i){
-//                         //console.log('Proposals under supervisor ' + i.name+': ' + i.proposals);
-//                         projectMember.push(i.proposals); 
-//                     }); 
+router.get('/supervisor-list', async (req, res) => {
+    if(req.user){        
+                    Supervisor.find().then((supervisors) => {
+                    let projectMember = [];
+                    supervisors.forEach( function(i){
+                        //console.log('Proposals under supervisor ' + i.name+': ' + i.proposals);
+                        projectMember.push(i.proposals); 
+                    }); 
+                   
+                    async function newArr(arr){
+                        //var results = '';
+                        var countArr = [];
+                        for(var i = 0; i<arr.length; i++){
+                            var array = arr[i];
+                            var count = 0;
+                            for(var j = 0; j < array.length; j++){
+                                //console.log('Each Proposals id under supervisor', array[j]);
+                                await ProjectSubmit.findById(array[j] , function(err, result){
+                                    if(err) return err
+                                   //results +=  result.memberId.length;
+                                   count += result.memberId.length;
+                                });
+                            }
+                            console.log(count);
+                            countArr.push(count);
+                            count = 0;
+                        }
+                        
+                        console.log('Blocking');
+                        res.render('main/supervisor', {title: 'Synergy - Admin Dashboard', supervisors: supervisors, countArr:countArr, message: req.flash('success')}); 
+                    }
+    
+                    newArr(projectMember);
                     
-//                     var x= "";
-//                     for(var i = 0; i<projectMember.length; i++){
-//                         var array = projectMember[i];
-//                         for(var j = 0; j < array.length; j++){
-//                             //console.log('Each Proposals id under supervisor', array[j]);
-//                             ProjectSubmit.findById(array[j]).then((projectMembers) => {
-//                                x += projectMembers.memberId.length;
-//                                console.log(x);
-
-//                             });
-                            
-//                         }
-//                        // console.log('Number of proposals ', array.length);
-//                     }
-//                    console.log(x);
-//                     res.render('main/supervisor', {title: 'Synergy - Admin Dashboard', supervisors: supervisors, message: req.flash('success')});                        
+                    
+                  
+                                           
                     
 
-//                  }, (e) => {
-//                      res.status(404).send(e);
-//                  });
+                 }, (e) => {
+                     res.status(404).send(e);
+                 });
         
-//             }else{
-//                 res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
-//             }
-//         });
-
-//     });
-// });
-
-router.get('/supervisor-list', (req, res) => {
-    if (req.user) {
-        console.log('In supervisor list route');
-        async function getResult() {
-            let result = await Supervisor.find();
-            console.log(result);
-            //let proposals = result[0];
-            console.log('Non-blocking I/O');
-            var proposal = [];
-            for (let i = 0; i < proposals.proposals.length; i++) {
-                await ProjectSubmit.find({ '_id': proposals.proposals[i] }).then((doc) => {
-                    proposal.push(_.toPlainObject(doc));
-                });
+            }else{
+                res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
             }
-            //console.log(proposal);
-            //res.render('main/supervisor', { title: 'Synergy - Admin Dashboard', supervisors: supervisors, message: req.flash('success') });
-
-        }
-        getResult();
-    }else {
-        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
-    }
 });
+// router.get('/supervisor-list', (req, res) => {
+//     if (req.user) {
+//         console.log('In supervisor list route');
+//         let fetchSupervisor = function() {
+//             return new Promise(function(resolve, reject){
+//                 Supervisor.find().then((result) => {
+//                     resolve(result);
+//                 });
+//             });
+//         }
+        
+//         let fetchProposal = function(docs){
+//             return new Promise(function(resolve, reject) {
+                
+//             });
+//         } 
+//         let fetchMembers = function(docs){
+//             return new Promise(function(resolve, reject){
+//                 resolve(docs);
+//             });
+//         } 
+//         fetchSupervisor().then(function(result){
+//             return fetchProposal(result);
+//         }).then(function(result){
+//             return fetchMembers(result);
+//         }).then(function(result){
+//             console.log('Execute promoise ' + result);
+//         });
+//     }else {
+//         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+//     }
+// });
 
 
 router.get('/supervisor-list/:id', (req, res, next) => {
