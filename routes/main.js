@@ -193,8 +193,6 @@ router.get('/supervisor-list', (req, res) => {
             });
 
             async function newArr(arr) {
-                //var results = '';
-                const countArr = [];
                 for (var i = 0; i < arr.length; i++) {
                     var array = arr[i];
                     var count = 0;
@@ -218,12 +216,6 @@ router.get('/supervisor-list', (req, res) => {
             }
 
             newArr(projectMember);
-
-
-
-
-
-
         }, (e) => {
             res.status(404).send(e);
         });
