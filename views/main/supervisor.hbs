@@ -33,30 +33,25 @@
                         <th>Email</th>
                         <th>Assigned Proposals</th>
                         <th>Total Members</th>
-                        <th>Remove supervisor</th>
                         </tr>
                     </thead>
                    
                     <tbody>
+                       
                          {{#each supervisors}}
-                           
+                            
                                 <tr>
-                                <th scope="row">{{@index}}</th>
+                                <th scope="row">{{@index}} </th>
                                 <td><a href="/supervisor-list/{{this._id}}">{{this.name}}</a></td>
                                 <td>{{this.email}}</td>
                                 <td>{{this.proposals.length}}</td>
-                                <td>
-
-                                </td>
-                                <td>
-                                    {{!-- <button class="btn btn-danger">Remove</button> --}}
-                                    <a href="/remove-supervisor/{{this.email}}" class="remove">Remove</a>
-                                </td>
+                            
+                                <td>{{this.__v}}</td> 
                                 </tr>
                            
-                         {{/each}}
+                         {{/each}} 
 
-                         
+                                        
                     </tbody>
                     
                     </table>
@@ -72,7 +67,6 @@
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Assigned Proposals</th>
-                        <th>Total Members</th>
                         <th>Remove supervisor</th>
                         </tr>
                     </thead>
@@ -85,9 +79,7 @@
                                 <td><a href="/supervisor-list/{{this._id}}">{{this.name}}</a></td>
                                 <td>{{this.email}}</td>
                                 <td>{{this.proposals.length}}</td>
-                                <td>
-
-                                </td>
+                               
                                 <td>
                                     {{!-- <button class="btn btn-danger">Remove</button> --}}
                                     <a href="/remove-supervisor/{{this.email}}" class="remove">Remove</a>

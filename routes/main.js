@@ -135,7 +135,7 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
             mailer.sendEmail('admin@synergy.com', email, 'Your proposal has been rejected', html);
 
         });
-        
+
         next();
 
 
@@ -149,12 +149,12 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
 
 //Removing supervisors from admin
 router.get('/remove-supervisor/:email', (req, res, next) => {
-    Invite.findOneAndRemove({email : req.params.email}).then((invite) => {
+    Invite.findOneAndRemove({ email: req.params.email }).then((invite) => {
         next();
     });
-    Supervisor.findOneAndRemove({email: req.params.email}).then((supervisor) => {
+    Supervisor.findOneAndRemove({ email: req.params.email }).then((supervisor) => {
         res.redirect('/remove-supervisors');
-    });    
+    });
 });
 
 var supervisorName;
@@ -181,7 +181,7 @@ router.post('/proposals/assign/:id', (req, res, next) => {
         // If that attribute isn't in the request body, default back to whatever it was before.
         projectSubmit.pending = false;
         projectSubmit.save((err, projectSubmit) => {
-            if(err){
+            if (err) {
                 return res.status(500).send(err);
             }
             var emails = projectSubmit.memberEmail;
@@ -217,75 +217,52 @@ router.post('/proposals/assign/:id', (req, res, next) => {
             
 
         });
-    
+
     });
 });
-// router.get('/supervisor-list', (req, res) => {
-//     if(req.user){        
-//                     Supervisor.find().then((supervisors) => {
-//                     let projectMember = [];
-//                     supervisors.forEach( function(i){
-//                         //console.log('Proposals under supervisor ' + i.name+': ' + i.proposals);
-//                         projectMember.push(i.proposals); 
-//                     }); 
-                    
-//                     var x= "";
-//                     for(var i = 0; i<projectMember.length; i++){
-//                         var array = projectMember[i];
-//                         for(var j = 0; j < array.length; j++){
-//                             //console.log('Each Proposals id under supervisor', array[j]);
-//                             ProjectSubmit.findById(array[j]).then((projectMembers) => {
-//                                x += projectMembers.memberId.length;
-//                                console.log(x);
-
-//                             });
-                            
-//                         }
-//                        // console.log('Number of proposals ', array.length);
-//                     }
-//                    console.log(x);
-//                     res.render('main/supervisor', {title: 'Synergy - Admin Dashboard', supervisors: supervisors, message: req.flash('success')});                        
-                    
-
-//                  }, (e) => {
-//                      res.status(404).send(e);
-//                  });
-        
-//             }else{
-//                 res.render('accounts/login', {title: 'Synergy - Admin Dashboard'});
-//             }
-//         });
-
-//     });
-// });
-
 router.get('/supervisor-list', (req, res) => {
     if (req.user) {
-        console.log('In supervisor list route');
-        async function getResult() {
-            let result = await Supervisor.find();
-            console.log(result);
-            //let proposals = result[0];
-            console.log('Non-blocking I/O');
-            var proposal = [];
-            for (let i = 0; i < proposals.proposals.length; i++) {
-                await ProjectSubmit.find({ '_id': proposals.proposals[i] }).then((doc) => {
-                    proposal.push(_.toPlainObject(doc));
-                });
-            }
-            //console.log(proposal);
-            //res.render('main/supervisor', { title: 'Synergy - Admin Dashboard', supervisors: supervisors, message: req.flash('success') });
+        Supervisor.find().then((supervisors) => {
+            let projectMember = [];
+            supervisors.forEach(function(i) {
+                //console.log('Proposals under supervisor ' + i.name+': ' + i.proposals);
+                projectMember.push(i.proposals);
+            });
 
-        }
-        getResult();
-    }else {
+            async function newArr(arr) {
+                for (var i = 0; i < arr.length; i++) {
+                    var array = arr[i];
+                    var count = 0;
+                    for (var j = 0; j < array.length; j++) {
+                        //console.log('Each Proposals id under supervisor', array[j]);
+                        await ProjectSubmit.findById(array[j], function(err, result) {
+                            if (err) return err;
+                            //console.log(result);
+                            //results +=  result.memberId.length;
+                            count += result.memberId.length;
+                        });
+                    }
+                    console.log(count);
+                    supervisors[i]['__v'] = count;
+                    count = 0;
+
+                }
+                console.log('Blocking');
+                res.render('main/supervisor', { title: 'Synergy - Admin Dashboard', supervisors: supervisors, message: req.flash('success') });
+            }
+
+            newArr(projectMember);
+        }, (e) => {
+            res.status(404).send(e);
+        });
+
+    } else {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
     }
 });
 
-
 router.get('/supervisor-list/:id', (req, res, next) => {
-    if(req.user){
+    if (req.user) {
         async function getResult() {
             let result = await Supervisor.find({ '_id': req.params.id });
             let proposals = result[0];
@@ -300,9 +277,15 @@ router.get('/supervisor-list/:id', (req, res, next) => {
             //console.log(proposal);
         }
         getResult();
-    }else{
+    } else {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
- }
+    }
+});
+
+router.get('/all-student', (req, res, next) => {
+    ProjectSubmit.find().then((students) => {
+        res.render('main/tables', { students: students, title: 'All students' });
+    });
 });
 
 module.exports = router;

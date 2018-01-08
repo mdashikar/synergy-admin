@@ -90,6 +90,27 @@
                 
                           
                           {{/each}}
+                          {{#each students}}
+
+
+                            <tr>
+                              
+                              <th scope="row">  {{@key}}</th>
+                              <td>
+                                  <div class="text">
+                                      <h3 class="h4">{{memberName}}</h3>
+                                  </div>
+                              </td>
+                              <td>{{memberId}}</td>
+                              {{!-- <td>{{#with 0.memberId}}
+                                    <h2>{{this}}</h2>
+                                    {{/with}}
+                              </td> --}}
+                             
+                            </tr> 
+                
+                          
+                          {{/each}}
                           
                           </tr>
                         </tbody>

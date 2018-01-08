@@ -4,26 +4,26 @@ const crypto = require('crypto');
 
 const Schema = mongoose.Schema;
 
-const SupervisorSchema = new Schema ({
-    email: {type:String, unique: true, lowercase: true},
+const SupervisorSchema = new Schema({
+    email: { type: String, unique: true, lowercase: true },
     name: String,
     password: String,
-    username: {type: String, unique: true, lowercase:true},
+    username: { type: String, unique: true, lowercase: true },
     proposals: [{
-       type: String
+        type: String
     }],
-    secretToken : {type: String}
+    secretToken: { type: String }
 });
 
 
-SupervisorSchema.pre('save', function(next){
+SupervisorSchema.pre('save', function(next) {
     var supervisor = this;
-    if(!supervisor.isModified('password')) return next();
-    if(supervisor.password){
-        bycrpt.genSalt(10, function(err, salt){
-            if(err) return next(err);
-            bycrpt.hash(supervisor.password, salt, null, function(err, hash){
-                if(err) return next();
+    if (!supervisor.isModified('password')) return next();
+    if (supervisor.password) {
+        bycrpt.genSalt(10, function(err, salt) {
+            if (err) return next(err);
+            bycrpt.hash(supervisor.password, salt, null, function(err, hash) {
+                if (err) return next();
                 supervisor.password = hash;
                 next(err);
             })
@@ -32,7 +32,7 @@ SupervisorSchema.pre('save', function(next){
 });
 
 
-SupervisorSchema.methods.comparePassword = function(password){
+SupervisorSchema.methods.comparePassword = function(password) {
     return bycrpt.compareSync(password, this.password);
 }
 
