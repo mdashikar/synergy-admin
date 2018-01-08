@@ -91,16 +91,18 @@ router.post('/invite-supervisor', (req,res,next) => {
                 
                     if(err) return next(err);
                     
-                    const html = 'Hi there,\n\n\n' +
-                    'This is a supervisor invitation from CSE department of Leading University to supervise third year and final year project.\n\n' +
-                    'To register as a supervisor please go through the following link.\n\n' +
-                    'http://'+'s-supervisor.herokuapp.com'+'/signup-supervisor/' + secretToken + '\n\n\n' +
+                    const html = `Hi there,
+                    <br/><br/>
+                    This is a supervisor invitation from CSE department of Leading University
+                    to supervise third year and final year project.<br/><br/>
+                    To register as a supervisor please go through the following link : 
+                    http://s-supervisor.herokuapp.com/signup-supervisor/${secretToken} <br/><br/><br/>
                                         
-                    'Have a good day!\n\n\n\n\n' +
-                    'Regards,\n' +
-                    'Minhazul Haque Riad\n' +
-                    'Senior Lecturer and Project Convenor\n' +
-                    'CSE deapartment,Leading University,Sylhet';
+                    Have a good day! <br/><br/>
+                    Regards, <br/>
+                    Minhazul Haque Riad  <br/>
+                    Senior Lecturer and Project Convenor  <br/>
+                    CSE deapartment,Leading University,Sylhet`;
                     
                 
                   
