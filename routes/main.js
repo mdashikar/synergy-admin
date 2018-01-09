@@ -157,21 +157,26 @@ router.get('/remove-supervisor/:email', (req, res, next) => {
     });
 });
 
-
+var supervisorName;
 
 router.post('/proposals/assign/:id', (req, res, next) => {
-    Supervisor.findOneAndUpdate({ "name": req.body.name }, { $push: { "proposals": req.params.id } }, { safe: true, upsert: true },
-        function(err, supervisor) {
-            if (err) {
-                console.log(err);
-                return res.send(err);
-            } else {
+     Supervisor.findOneAndUpdate(
+        {"name": req.body.name},
+        { $push: {"proposals": req.params.id}},
+        {  safe: true, upsert: true},
+          function(err, supervisor) {
+            if(err){
+               console.log(err);
+               return res.send(err);
+            }else{
+                supervisorName = supervisor.name;
                 req.flash('success', 'Assigned Successfully');
                 res.redirect('/proposals');
             }
         });
     ProjectSubmit.findOne({ _id: req.params.id }).then((projectSubmit) => {
-        console.log("This is postapprove id " + req.params.id);
+        console.log("This is post approve id " + req.params.id);
+        var id = projectSubmit._id;
         // Update each attribute with any possible attribute that may have been submitted in the body of the request
         // If that attribute isn't in the request body, default back to whatever it was before.
         projectSubmit.pending = false;
@@ -179,6 +184,38 @@ router.post('/proposals/assign/:id', (req, res, next) => {
             if (err) {
                 return res.status(500).send(err);
             }
+            var emails = projectSubmit.memberEmail;
+    
+            emails.forEach(function(email) {
+                console.log(email);
+                console.log(supervisorName);
+    
+                const html =`Dear Student,
+                <br/><br/>
+               
+               Congratulations! We are very glad to inform you that your project proposal is accepted
+               and your supervisor name is ${supervisorName}
+               <br/>
+               To register in synergy platform please go through the following link : 
+               http://synergy-student.herokuapp.com/signup/${id}
+               <br/><br/><br/>
+                                                   
+               Have a good day!
+               <br/><br/>
+               Regards,
+               <br/>
+               Minhazul Haque Riad
+               <br/>
+               Senior Lecturer and Project Convenor
+               <br/>
+               CSE deapartment,Leading University,Sylhet`;
+               
+    
+                mailer.sendEmail('admin@synergy.com', email, 'Your proposal is accepted', html);
+    
+            });
+            
+
         });
 
     });
