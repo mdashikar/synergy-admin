@@ -16,7 +16,7 @@ const Invite = require('../models/invite');
 var ObjectId = mongoose.Types.ObjectId;
 
 
-
+//home route
 router.route('/')
     .get((req, res, next) => {
         if (req.user) {
