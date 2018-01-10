@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var RegisteredStudent = mongoose.model('RegisteredStudent',{
-    _id:{type: mongoose.Schema.Types.ObjectId},
+   _id:{type: mongoose.Schema.Types.ObjectId},
    student_id: {
            type: String,
            required: true

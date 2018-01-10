@@ -37,19 +37,74 @@
                     <div class="card-header d-flex align-items-center">
                       <h3 class="h4">Proposal List</h3>
                     </div>
-                    <div class="card-body">
-                     
-                      <table class="table table-striped table-hover">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Title</th>
-                            <th>Type</th>
-                            <th>Id</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                           {{#each projectSubmit}}
+                    {{!-- proposal --}}
+                    {{#if proposal}}			
+                        <div class="card-body">
+                                            
+                            <table class="table table-striped table-hover">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Title</th>
+                                  <th>Type</th>
+                                  <th>Id</th>
+                                  <th>Remove</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {{#each proposal}}
+
+
+                            <tr>
+                              
+                              <th scope="row">  {{@key}}</th>
+                              <td>
+                                  <div class="text">
+                                      <a href="/proposals/{{0._id}}"><h3 class="h4">{{0.projectName}}</h3></a><br><small>Lorem Ipsum Dolor</small>
+                                  </div>
+                              </td>
+                              <td>{{0.projectType}}</td>
+                              <td>{{#with 0.memberId}}
+                                    <h2>{{this}}</h2>
+                                    {{/with}}
+                              </td>
+                              <td>
+                                    {{!-- <button class="btn btn-danger">Remove</button> --}}
+                                    <a href="/remove-accepted-proposal/{{0._id}}" class="remove">Remove</a>
+                                </td>
+                             
+                            </tr> 
+                
+                          
+                          {{/each}}
+
+                                
+                                
+                                </tr>
+                              </tbody>
+                            
+                            </table>
+                                  
+                            
+                          </div>
+                        {{/if}}
+                    {{!-- proposal --}}
+                    {{!-- projectSubmit --}}
+                        {{#if projectSubmit}}			
+                        <div class="card-body">
+                                            
+                            <table class="table table-striped table-hover">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Title</th>
+                                  <th>Type</th>
+                                  <th>Id</th>
+                                 
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {{#each projectSubmit}}
                         
                             <tr>
                               
@@ -69,28 +124,33 @@
                           
                           {{/each}}
 
-                          {{#each proposal}}
-
-
-                            <tr>
-                              
-                              <th scope="row">  {{@key}}</th>
-                              <td>
-                                  <div class="text">
-                                      <a href="/proposals/{{0._id}}"><h3 class="h4">{{0.projectName}}</h3></a><br><small>Lorem Ipsum Dolor</small>
-                                  </div>
-                              </td>
-                              <td>{{0.projectType}}</td>
-                              <td>{{#with 0.memberId}}
-                                    <h2>{{this}}</h2>
-                                    {{/with}}
-                              </td>
-                             
-                            </tr> 
-                
-                          
-                          {{/each}}
-                          {{#each students}}
+                                
+                                
+                                </tr>
+                              </tbody>
+                            
+                            </table>
+                                  
+                            
+                          </div>
+                        {{/if}}
+                    {{!-- projectSubmit --}}
+                    {{!-- students --}}
+                    {{#if students}}			
+                        <div class="card-body">
+                                            
+                            <table class="table table-striped table-hover">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Title</th>
+                                  <th>Type</th>
+                                  <th>Id</th>
+                                 
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {{#each students}}
 
 
                             <tr>
@@ -111,14 +171,19 @@
                 
                           
                           {{/each}}
-                          
-                          </tr>
-                        </tbody>
-                      
-                      </table>
+
+                                
+                                
+                                </tr>
+                              </tbody>
                             
-                      
-                    </div>
+                            </table>
+                                  
+                            
+                          </div>
+                        {{/if}}
+                    {{!-- students --}}
+                    
                   </div>
                 </div>
                

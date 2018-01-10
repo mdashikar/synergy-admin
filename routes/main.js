@@ -17,6 +17,7 @@ var ObjectId = mongoose.Types.ObjectId;
 
 
 
+
 router.route('/')
     .get((req, res, next) => {
         if (req.user) {
@@ -174,12 +175,14 @@ router.post('/proposals/assign/:id', (req, res, next) => {
                 res.redirect('/proposals');
             }
         });
+        
     ProjectSubmit.findOne({ _id: req.params.id }).then((projectSubmit) => {
         console.log("This is post approve id " + req.params.id);
         var id = projectSubmit._id;
         // Update each attribute with any possible attribute that may have been submitted in the body of the request
         // If that attribute isn't in the request body, default back to whatever it was before.
         projectSubmit.pending = false;
+        projectSubmit.supervisorName = supervisorName;
         projectSubmit.save((err, projectSubmit) => {
             if (err) {
                 return res.status(500).send(err);
@@ -219,6 +222,49 @@ router.post('/proposals/assign/:id', (req, res, next) => {
         });
 
     });
+});
+var nameOfSupervisorForRemove;
+//Removing accepted proposals
+router.get('/remove-accepted-proposal/:id', (req, res, next) => {
+    var id = req.params.id;
+    ProjectSubmit.findOneAndUpdate(
+    {_id : id},{pending: true},function(err, projectSubmit) 
+        {
+            if(err){
+            console.log(err);
+            return res.send(err);
+            }else{
+                nameOfSupervisorForRemove = projectSubmit.supervisorName;   
+                Supervisor.findOne({name : nameOfSupervisorForRemove}).then((supervisor) => {
+                   
+                    for(var i=0; i<supervisor.proposals.length; i++)
+                    {
+                        if(supervisor.proposals[i] == id)
+                        {
+
+                            console.log("found");
+                            Supervisor.findOneAndUpdate(
+                                {"name": nameOfSupervisorForRemove},
+                                { $pull: {"proposals": id}},
+                                {  safe: true, upsert: true},
+                                  function(err, supervisor) {
+                                    if(err){
+                                       console.log(err);
+                                       return res.send(err);
+                                    }
+                                });  
+                                break;                 
+                           
+                        }
+                    }
+                    console.log(nameOfSupervisorForRemove);
+                    res.redirect(`/supervisor-list`);
+                });
+            }
+    });
+    
+
+
 });
 router.get('/supervisor-list', (req, res) => {
     if (req.user) {
@@ -263,6 +309,7 @@ router.get('/supervisor-list', (req, res) => {
 
 router.get('/supervisor-list/:id', (req, res, next) => {
     if (req.user) {
+       
         async function getResult() {
             let result = await Supervisor.find({ '_id': req.params.id });
             let proposals = result[0];
@@ -281,6 +328,7 @@ router.get('/supervisor-list/:id', (req, res, next) => {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
     }
 });
+
 
 router.get('/all-student', (req, res, next) => {
     ProjectSubmit.find().then((students) => {

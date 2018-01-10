@@ -11,6 +11,9 @@ var ProjectSubmit = mongoose.model('ProjectSubmit', {
         minLength: 5,
         trim:true
     },
+    supervisorName:{
+        type: 'string'
+    },
     projectType:{
         type: 'string',
         required: true,
