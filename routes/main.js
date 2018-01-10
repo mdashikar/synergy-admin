@@ -228,11 +228,12 @@ router.get('/supervisor-list', (req, res) => {
                 //console.log('Proposals under supervisor ' + i.name+': ' + i.proposals);
                 projectMember.push(i.proposals);
             });
-
+            
             async function newArr(arr) {
+                var count = 0;
                 for (var i = 0; i < arr.length; i++) {
                     var array = arr[i];
-                    var count = 0;
+                    
                     for (var j = 0; j < array.length; j++) {
                         //console.log('Each Proposals id under supervisor', array[j]);
                         await ProjectSubmit.findById(array[j], function(err, result) {

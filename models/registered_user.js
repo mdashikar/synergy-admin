@@ -8,6 +8,8 @@ var RegisteredStudent = mongoose.model('RegisteredStudent',{
            
    },
    course_code : {type: String, required: true},
+   semester: {type: String, required: true},
+   year: {type: String, require: true},
    created: { 
        type: Date,
        default: Date.now
