@@ -1,4 +1,4 @@
 module.exports = {
-    MAILGUN_USER : 'book.it.reservation@gmail.com',
+    MAILGUN_USER : 'synergy.synergism@gmail.com',
     MAILGUN_PASS : 'team****'
 };
