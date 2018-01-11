@@ -13,6 +13,7 @@ const passport = require('passport');
 const randomstring = require('randomstring');
 const passportConfig = require('../config/passport');
 const Invite = require('../models/invite');
+const Student = require('../models/student');
 var ObjectId = mongoose.Types.ObjectId;
 
 
@@ -100,9 +101,42 @@ router.get('/template', template.get);
 router.post('/registered_user', upload.post);
 
 router.get('/proposals/:id', (req, res, next) => {
+    var id = req.params.id;
+    
 
-    ProjectSubmit.findById(req.params.id).then((projectSubmit) => {
+    ProjectSubmit.findById(id).then((projectSubmit) => {
+        
         //res.render('main/proposal-des', {title: req.params.projectName, projectSubmit: projectSubmit});
+        if(projectSubmit.pending == false)
+        {
+            async function getStatus()
+            {
+                var counter = 0;
+                console.log("Inside proposal");   
+                for (var i=0; i<projectSubmit.memberId.length; i++)
+                {
+                    await Student.findOne({email: projectSubmit.memberEmail[i]}).then((student) => {
+                        if(student.proposal_id == id)
+                        {
+                            
+                             counter ++;
+                            console.log("counting",counter);
+                            if(projectSubmit.memberId.length == counter)
+                            {
+                                projectSubmit.status = "Running";
+                                projectSubmit.save();
+                                console.log("status changed");
+                                
+                            }
+                        }
+                        
+                    });
+                }
+               // console.log(projectSubmit.memberId.length," : ",counter);
+            }
+            getStatus();
+           
+        }
         Supervisor.find({}).then((supervisor) => {
             res.render('main/proposal-des', { title: 'Synergy - Admin Dashboard', projectSubmit: projectSubmit, supervisor: supervisor });
         });
@@ -227,41 +261,89 @@ var nameOfSupervisorForRemove;
 //Removing accepted proposals
 router.get('/remove-accepted-proposal/:id', (req, res, next) => {
     var id = req.params.id;
-    ProjectSubmit.findOneAndUpdate(
-    {_id : id},{pending: true},function(err, projectSubmit) 
-        {
-            if(err){
-            console.log(err);
-            return res.send(err);
-            }else{
-                nameOfSupervisorForRemove = projectSubmit.supervisorName;   
-                Supervisor.findOne({name : nameOfSupervisorForRemove}).then((supervisor) => {
-                   
-                    for(var i=0; i<supervisor.proposals.length; i++)
-                    {
-                        if(supervisor.proposals[i] == id)
-                        {
-
-                            console.log("found");
-                            Supervisor.findOneAndUpdate(
-                                {"name": nameOfSupervisorForRemove},
-                                { $pull: {"proposals": id}},
-                                {  safe: true, upsert: true},
-                                  function(err, supervisor) {
-                                    if(err){
-                                       console.log(err);
-                                       return res.send(err);
+    Student.findOneAndRemove({proposal_id:id}).then((student) => {
+        //next();
+        ProjectSubmit.findOneAndUpdate(
+            {_id : id},{pending: true},function(err, projectSubmit) 
+                {
+                    if(err){
+                    console.log(err);
+                    return res.send(err);
+                    }else{
+                        nameOfSupervisorForRemove = projectSubmit.supervisorName;   
+                        Supervisor.findOne({name : nameOfSupervisorForRemove}).then((supervisor) => {
+                            
+                                for(var i=0; i<supervisor.proposals.length; i++)
+                                {
+                                    if(supervisor.proposals[i] == id)
+                                    {
+            
+                                        console.log("found");
+                                         Supervisor.findOneAndUpdate(
+                                            {"name": nameOfSupervisorForRemove},
+                                            { $pull: {"proposals": id}},
+                                            {  safe: true, upsert: true},
+                                              function(err, supervisor) {
+                                                if(err){
+                                                   console.log(err);
+                                                   return res.send(err);
+                                                }
+                                            });  
+                                            break;                 
+                                       
                                     }
-                                });  
-                                break;                 
+                                }
+                            
+                            
+                            
                            
-                        }
+                            
+                            console.log(nameOfSupervisorForRemove);
+                            res.redirect(`/supervisor-list`);
+                        });
                     }
-                    console.log(nameOfSupervisorForRemove);
-                    res.redirect(`/supervisor-list`);
-                });
-            }
+            });
     });
+    // ProjectSubmit.findOneAndUpdate(
+    // {_id : id},{pending: true},function(err, projectSubmit) 
+    //     {
+    //         if(err){
+    //         console.log(err);
+    //         return res.send(err);
+    //         }else{
+    //             nameOfSupervisorForRemove = projectSubmit.supervisorName;   
+    //             Supervisor.findOne({name : nameOfSupervisorForRemove}).then((supervisor) => {
+                    
+    //                     for(var i=0; i<supervisor.proposals.length; i++)
+    //                     {
+    //                         if(supervisor.proposals[i] == id)
+    //                         {
+    
+    //                             console.log("found");
+    //                              Supervisor.findOneAndUpdate(
+    //                                 {"name": nameOfSupervisorForRemove},
+    //                                 { $pull: {"proposals": id}},
+    //                                 {  safe: true, upsert: true},
+    //                                   function(err, supervisor) {
+    //                                     if(err){
+    //                                        console.log(err);
+    //                                        return res.send(err);
+    //                                     }
+    //                                 });  
+    //                                 break;                 
+                               
+    //                         }
+    //                     }
+                    
+                    
+                    
+                   
+                    
+    //                 console.log(nameOfSupervisorForRemove);
+    //                 res.redirect(`/supervisor-list`);
+    //             });
+    //         }
+    // });
     
 
 
@@ -336,5 +418,9 @@ router.get('/all-student', (req, res, next) => {
         res.render('main/tables', { students: students, title: 'All students' });
     });
 });
+
+//Checking status of project
+
+
 
 module.exports = router;
