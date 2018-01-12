@@ -262,10 +262,16 @@ var nameOfSupervisorForRemove;
 router.get('/remove-accepted-proposal/:id', (req, res, next) => {
     var id = req.params.id;
     Student.findOneAndRemove({proposal_id:id}).then((student) => {
+        console.log("inside student");
         //next();
         ProjectSubmit.findOneAndUpdate(
-            {_id : id},{pending: true},function(err, projectSubmit) 
+            {_id : id},
+            // {pending: true},
+            // {status: "Not Started"},
+            { "$set": { "pending": true, "status": "Not Started"}},
+            function(err, projectSubmit) 
                 {
+                    console.log("inside proposals");
                     if(err){
                     console.log(err);
                     return res.send(err);
