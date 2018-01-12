@@ -102,40 +102,35 @@ router.post('/registered_user', upload.post);
 
 router.get('/proposals/:id', (req, res, next) => {
     var id = req.params.id;
-    
+
 
     ProjectSubmit.findById(id).then((projectSubmit) => {
-        
+
         //res.render('main/proposal-des', {title: req.params.projectName, projectSubmit: projectSubmit});
-        if(projectSubmit.pending == false)
-        {
-            async function getStatus()
-            {
+        if (projectSubmit.pending == false) {
+            async function getStatus() {
                 var counter = 0;
-                console.log("Inside proposal");   
-                for (var i=0; i<projectSubmit.memberId.length; i++)
-                {
-                    await Student.findOne({email: projectSubmit.memberEmail[i]}).then((student) => {
-                        if(student.proposal_id == id)
-                        {
-                            
-                             counter ++;
-                            console.log("counting",counter);
-                            if(projectSubmit.memberId.length == counter)
-                            {
+                console.log("Inside proposal");
+                for (var i = 0; i < projectSubmit.memberId.length; i++) {
+                    await Student.findOne({ email: projectSubmit.memberEmail[i] }).then((student) => {
+                        if (student.proposal_id == id) {
+
+                            counter++;
+                            console.log("counting", counter);
+                            if (projectSubmit.memberId.length == counter) {
                                 projectSubmit.status = "Running";
                                 projectSubmit.save();
                                 console.log("status changed");
-                                
+
                             }
                         }
-                        
+
                     });
                 }
-               // console.log(projectSubmit.memberId.length," : ",counter);
+                // console.log(projectSubmit.memberId.length," : ",counter);
             }
             getStatus();
-           
+
         }
         Supervisor.find({}).then((supervisor) => {
             res.render('main/proposal-des', { title: 'Synergy - Admin Dashboard', projectSubmit: projectSubmit, supervisor: supervisor });
@@ -195,21 +190,18 @@ router.get('/remove-supervisor/:email', (req, res, next) => {
 var supervisorName;
 
 router.post('/proposals/assign/:id', (req, res, next) => {
-     Supervisor.findOneAndUpdate(
-        {"name": req.body.name},
-        { $push: {"proposals": req.params.id}},
-        {  safe: true, upsert: true},
-          function(err, supervisor) {
-            if(err){
-               console.log(err);
-               return res.send(err);
-            }else{
+    Supervisor.findOneAndUpdate({ "name": req.body.name }, { $push: { "proposals": req.params.id } }, { safe: true, upsert: true },
+        function(err, supervisor) {
+            if (err) {
+                console.log(err);
+                return res.send(err);
+            } else {
                 supervisorName = supervisor.name;
                 req.flash('success', 'Assigned Successfully');
                 res.redirect('/proposals');
             }
         });
-        
+
     ProjectSubmit.findOne({ _id: req.params.id }).then((projectSubmit) => {
         console.log("This is post approve id " + req.params.id);
         var id = projectSubmit._id;
@@ -222,12 +214,12 @@ router.post('/proposals/assign/:id', (req, res, next) => {
                 return res.status(500).send(err);
             }
             var emails = projectSubmit.memberEmail;
-    
+
             emails.forEach(function(email) {
                 console.log(email);
                 console.log(supervisorName);
-    
-                const html =`Dear Student,
+
+                const html = `Dear Student,
                 <br/><br/>
                
                Congratulations! We are very glad to inform you that your project proposal is accepted
@@ -246,12 +238,12 @@ router.post('/proposals/assign/:id', (req, res, next) => {
                Senior Lecturer and Project Convenor
                <br/>
                CSE deapartment,Leading University,Sylhet`;
-               
-    
+
+
                 mailer.sendEmail('admin@synergy.com', email, 'Your proposal is accepted', html);
-    
+
             });
-            
+
 
         });
 
@@ -261,48 +253,41 @@ var nameOfSupervisorForRemove;
 //Removing accepted proposals
 router.get('/remove-accepted-proposal/:id', (req, res, next) => {
     var id = req.params.id;
-    Student.findOneAndRemove({proposal_id:id}).then((student) => {
+    Student.findOneAndRemove({ proposal_id: id }).then((student) => {
         //next();
-        ProjectSubmit.findOneAndUpdate(
-            {_id : id},{pending: true},function(err, projectSubmit) 
-                {
-                    if(err){
-                    console.log(err);
-                    return res.send(err);
-                    }else{
-                        nameOfSupervisorForRemove = projectSubmit.supervisorName;   
-                        Supervisor.findOne({name : nameOfSupervisorForRemove}).then((supervisor) => {
-                            
-                                for(var i=0; i<supervisor.proposals.length; i++)
-                                {
-                                    if(supervisor.proposals[i] == id)
-                                    {
-            
-                                        console.log("found");
-                                         Supervisor.findOneAndUpdate(
-                                            {"name": nameOfSupervisorForRemove},
-                                            { $pull: {"proposals": id}},
-                                            {  safe: true, upsert: true},
-                                              function(err, supervisor) {
-                                                if(err){
-                                                   console.log(err);
-                                                   return res.send(err);
-                                                }
-                                            });  
-                                            break;                 
-                                       
+        ProjectSubmit.findOneAndUpdate({ _id: id }, { pending: true }, function(err, projectSubmit) {
+            if (err) {
+                console.log(err);
+                return res.send(err);
+            } else {
+                nameOfSupervisorForRemove = projectSubmit.supervisorName;
+                Supervisor.findOne({ name: nameOfSupervisorForRemove }).then((supervisor) => {
+
+                    for (var i = 0; i < supervisor.proposals.length; i++) {
+                        if (supervisor.proposals[i] == id) {
+
+                            console.log("found");
+                            Supervisor.findOneAndUpdate({ "name": nameOfSupervisorForRemove }, { $pull: { "proposals": id } }, { safe: true, upsert: true },
+                                function(err, supervisor) {
+                                    if (err) {
+                                        console.log(err);
+                                        return res.send(err);
                                     }
-                                }
-                            
-                            
-                            
-                           
-                            
-                            console.log(nameOfSupervisorForRemove);
-                            res.redirect(`/supervisor-list`);
-                        });
+                                });
+                            break;
+
+                        }
                     }
-            });
+
+
+
+
+
+                    console.log(nameOfSupervisorForRemove);
+                    res.redirect(`/supervisor-list`);
+                });
+            }
+        });
     });
     // ProjectSubmit.findOneAndUpdate(
     // {_id : id},{pending: true},function(err, projectSubmit) 
@@ -313,12 +298,12 @@ router.get('/remove-accepted-proposal/:id', (req, res, next) => {
     //         }else{
     //             nameOfSupervisorForRemove = projectSubmit.supervisorName;   
     //             Supervisor.findOne({name : nameOfSupervisorForRemove}).then((supervisor) => {
-                    
+
     //                     for(var i=0; i<supervisor.proposals.length; i++)
     //                     {
     //                         if(supervisor.proposals[i] == id)
     //                         {
-    
+
     //                             console.log("found");
     //                              Supervisor.findOneAndUpdate(
     //                                 {"name": nameOfSupervisorForRemove},
@@ -331,20 +316,20 @@ router.get('/remove-accepted-proposal/:id', (req, res, next) => {
     //                                     }
     //                                 });  
     //                                 break;                 
-                               
+
     //                         }
     //                     }
-                    
-                    
-                    
-                   
-                    
+
+
+
+
+
     //                 console.log(nameOfSupervisorForRemove);
     //                 res.redirect(`/supervisor-list`);
     //             });
     //         }
     // });
-    
+
 
 
 });
@@ -356,12 +341,12 @@ router.get('/supervisor-list', (req, res) => {
                 //console.log('Proposals under supervisor ' + i.name+': ' + i.proposals);
                 projectMember.push(i.proposals);
             });
-            
+
             async function newArr(arr) {
                 var count = 0;
                 for (var i = 0; i < arr.length; i++) {
                     var array = arr[i];
-                    
+
                     for (var j = 0; j < array.length; j++) {
                         //console.log('Each Proposals id under supervisor', array[j]);
                         await ProjectSubmit.findById(array[j], function(err, result) {
@@ -392,7 +377,7 @@ router.get('/supervisor-list', (req, res) => {
 
 router.get('/supervisor-list/:id', (req, res, next) => {
     if (req.user) {
-       
+
         async function getResult() {
             let result = await Supervisor.find({ '_id': req.params.id });
             let proposals = result[0];
@@ -417,6 +402,10 @@ router.get('/all-student', (req, res, next) => {
     ProjectSubmit.find().then((students) => {
         res.render('main/tables', { students: students, title: 'All students' });
     });
+});
+
+router.get('/export', (req, res, next) => {
+    res.render('main/export');
 });
 
 //Checking status of project
