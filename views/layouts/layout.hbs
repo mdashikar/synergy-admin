@@ -56,14 +56,14 @@
         $("#exportButton").click(function () {
             // parse the HTML table element having an id=exportTable
             var dataSource = shield.DataSource.create({
-                data: "#exportTable",
+                data: ".exportTable",
                 schema: {
                     type: "table",
                     fields: {
                         Name: { type: String },
                         Id: { type: Number },
                         Email: { type: String },
-                        Number: {type: String}
+                        Supervisor: {type: String}
                     }
                 }
             });
@@ -78,22 +78,16 @@
                 pdf.addPage("a4", "portrait");
 
                 pdf.table(
-                    50,
-                    50,
+                    5,
+                    5,
                     data,
                     [
-                        { field: "Name", title: "Name", width: 200 },
-                        { field: "ID", title: "Age", width: 50 },
-                        { field: "Email", title: "Email", width: 200 },
-                        { field: "Mobile", title: "Mobile", width: 200 }
+                        { field: "Name", title: "Name", width: 150 },
+                        { field: "Id", title: "Id", width: 100 },
+                        { field: "Email", title: "Email", width: 150 },
+                        { field: "Supervisor", title: "Supervisor Name", width: 200 }
                         
-                    ],
-                    {
-                        margins: {
-                            top: 50,
-                            left: 50
-                        }
-                    }
+                    ]
                 );
 
                 pdf.saveAs({
