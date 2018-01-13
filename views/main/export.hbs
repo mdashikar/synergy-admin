@@ -60,11 +60,12 @@
                       <table class="table table-striped table-hover exportTable" id="example">
                         <thead>
                           <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Id</th>
-                            <th>Email</th>
-                            <th>Supervisor</th>
+                            
+                                <th>#</th>
+                                <th>Projects</th>
+                                <th>Name</th>
+                                <th>Id</th>
+                                <th>Supervisor</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -73,7 +74,7 @@
 
                             <tr>
                               
-                              <th scope="row">  {{@key}}</th>
+                              {{!-- <th scope="row">  {{@key}}</th>
                               <td>{{memberName}}</td>
                               <td>{{memberId}}</td>
                               <td>{{memberEmail}}</td>
@@ -81,7 +82,12 @@
                               {{!-- <td>{{#with 0.memberId}}
                                     <h2>{{this}}</h2>
                                     {{/with}}
-                              </td> --}}
+                              </td> --}} --}}
+                              <th scope="row">  {{@key}}</th>
+                              <td>{{projectName}}</td>
+                              <td>{{memberName}}</td>
+                              <td>{{memberId}}</td>
+                              <td>{{supervisorName}}</td>
                              
                             </tr> 
                 
