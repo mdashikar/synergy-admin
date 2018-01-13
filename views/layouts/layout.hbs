@@ -61,8 +61,9 @@
                     type: "table",
                     fields: {
                         Name: { type: String },
-                        Age: { type: Number },
-                        Email: { type: String }
+                        Id: { type: Number },
+                        Email: { type: String },
+                        Number: {type: String}
                     }
                 }
             });
@@ -70,7 +71,7 @@
             // when parsing is done, export the data to PDF
             dataSource.read().then(function (data) {
                 var pdf = new shield.exp.PDFDocument({
-                    author: "PrepBootstrap",
+                    author: "Synergy",
                     created: new Date()
                 });
 
@@ -81,9 +82,11 @@
                     50,
                     data,
                     [
-                        { field: "Name", title: "Person Name", width: 200 },
-                        { field: "Age", title: "Age", width: 50 },
-                        { field: "Email", title: "Email Address", width: 200 }
+                        { field: "Name", title: "Name", width: 200 },
+                        { field: "ID", title: "Age", width: 50 },
+                        { field: "Email", title: "Email", width: 200 },
+                        { field: "Mobile", title: "Mobile", width: 200 }
+                        
                     ],
                     {
                         margins: {
@@ -94,7 +97,7 @@
                 );
 
                 pdf.saveAs({
-                    fileName: "PrepBootstrapPDF"
+                    fileName: "SyngeryExportPDF"
                 });
             });
         });

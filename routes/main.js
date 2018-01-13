@@ -400,7 +400,7 @@ router.get('/supervisor-list/:id', (req, res, next) => {
 
 router.get('/all-student', (req, res, next) => {
     ProjectSubmit.find().then((students) => {
-        res.render('main/tables', { students: students, title: 'All students' });
+        res.render('main/export', { students: students, title: 'All students' });
     });
 });
 
