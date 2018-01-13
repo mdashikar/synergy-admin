@@ -251,17 +251,23 @@ router.post('/proposals/assign/:id', (req, res, next) => {
 });
 var nameOfSupervisorForRemove;
 //Removing accepted proposals
-router.get('/remove-accepted-proposal/:id', (req, res, next) => {
+router.get('/remove-accepted-proposal/:id', (req, res, next) => 
+{
     var id = req.params.id;
     Student.findOneAndRemove({ proposal_id: id }).then((student) => {
+        console.log("inside student");
         //next();
-        ProjectSubmit.findOneAndUpdate({ _id: id }, { pending: true }, function(err, projectSubmit) {
+        ProjectSubmit.findOneAndUpdate({ _id: id },
+	 { "$set": { "pending": true, "status": "Not Started"}},
+	 function(err, projectSubmit) {
+        console.log("inside proposal");
             if (err) {
                 console.log(err);
                 return res.send(err);
             } else {
                 nameOfSupervisorForRemove = projectSubmit.supervisorName;
                 Supervisor.findOne({ name: nameOfSupervisorForRemove }).then((supervisor) => {
+                    console.log("inside supervisor");
 
                     for (var i = 0; i < supervisor.proposals.length; i++) {
                         if (supervisor.proposals[i] == id) {
@@ -273,6 +279,7 @@ router.get('/remove-accepted-proposal/:id', (req, res, next) => {
                                         console.log(err);
                                         return res.send(err);
                                     }
+                                    console.log("removed from supervisor");
                                 });
                             break;
 
