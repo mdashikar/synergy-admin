@@ -183,6 +183,59 @@
                           </div>
                         {{/if}}
                     {{!-- students --}}
+                    {{#if exportStudents}}			
+                        <div class="card-body">
+                                            
+                            <table class="table table-striped table-hover" id="example">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Project Name</th>
+                                  <th>Members Name</th>
+                                  <th>Members Id</th>
+                                  <th>Supervisor Name</th>
+                                 
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {{#each exportStudents}}
+
+
+                            <tr>
+                              
+                              <th scope="row">  {{@key}}</th>
+                              <td>
+                                  {{projectName}}
+                              </td>
+                              <td>{{#with memberName}}
+                                    <h4>{{this}}</h4>
+                                    {{/with}}
+                              </td>
+                              <td>{{#with memberId}}
+                                    <h4>{{this}}</h4>
+                                    {{/with}}
+                              </td>
+                              <td>
+                                  {{supervisorName}}
+                              </td>
+                              
+                              
+                             
+                            </tr> 
+                
+                          
+                          {{/each}}
+
+                                
+                                
+                                </tr>
+                              </tbody>
+                            
+                            </table>
+                                  
+                            
+                          </div>
+                        {{/if}}
                     
                   </div>
                 </div>

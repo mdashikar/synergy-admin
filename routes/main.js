@@ -411,6 +411,13 @@ router.get('/all-student', (req, res, next) => {
     });
 });
 
+//
+router.get('/export-students', (req,res,next) => {
+    ProjectSubmit.find().then((exportStudents) => {
+        res.render('main/tables', { exportStudents: exportStudents, title: 'Export Students' });
+    });
+});
+
 router.get('/export', (req, res, next) => {
     res.render('main/export');
 });
