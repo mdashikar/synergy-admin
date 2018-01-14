@@ -11,7 +11,8 @@ const StudentSchema = new Schema({
   boards: [{
      type: Schema.Types.ObjectId, ref: 'Boards'
   }],
-  proposal_id : String
+  proposal_id : String,
+  secretToken : String
 });
 
 StudentSchema.pre('save', function(next) {

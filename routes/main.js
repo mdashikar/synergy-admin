@@ -14,7 +14,11 @@ const randomstring = require('randomstring');
 const passportConfig = require('../config/passport');
 const Invite = require('../models/invite');
 const Student = require('../models/student');
+var crypto = require('crypto');
 var ObjectId = mongoose.Types.ObjectId;
+var algorithm = 'aes-256-ctr',
+password = 'd6F3Efeq';
+
 
 
 
@@ -214,10 +218,21 @@ router.post('/proposals/assign/:id', (req, res, next) => {
                 return res.status(500).send(err);
             }
             var emails = projectSubmit.memberEmail;
+            var secretToken = randomstring.generate();
 
             emails.forEach(function(email) {
                 console.log(email);
                 console.log(supervisorName);
+                    function encrypt(text){
+                    var cipher = crypto.createCipher(algorithm,password)
+                    var crypted = cipher.update(text,'utf8','hex')
+                    crypted += cipher.final('hex');
+                    return crypted;
+                    };
+                    console.log(email);
+                    var encryptEmail = encrypt(email);
+                    console.log(encryptEmail);
+                    
 
                 const html = `Dear Student,
                 <br/><br/>
@@ -226,7 +241,7 @@ router.post('/proposals/assign/:id', (req, res, next) => {
                and your supervisor name is ${supervisorName}
                <br/>
                To register in synergy platform please go through the following link : 
-               http://synergy-student.herokuapp.com/signup/${id}
+               http://synergy-student.herokuapp.com/signup/${id}/${encryptEmail}/${secretToken}
                <br/><br/><br/>
                                                    
                Have a good day!
