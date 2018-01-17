@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/server.js",
+    "start": "nodemon server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -27,7 +27,7 @@
     "hbs": "^4.0.1",
     "json2csv": "^3.11.5",
     "lodash": "^4.17.4",
-    "moment": "^2.19.2",
+    "moment": "^2.20.1",
     "mongodb": "^2.2.16",
     "mongoose": "^4.7.2",
     "morgan": "^1.9.0",
@@ -38,6 +38,7 @@
     "randomstring": "^1.1.5",
     "request": "^2.83.0",
     "socket.io": "^2.0.4",
+    "tableexport": "^4.0.11",
     "validator": "^9.1.1"
   },
   "devDependencies": {
