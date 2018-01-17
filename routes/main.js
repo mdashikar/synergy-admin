@@ -15,9 +15,9 @@ const passportConfig = require('../config/passport');
 const Invite = require('../models/invite');
 const Student = require('../models/student');
 var crypto = require('crypto');
-var ObjectId = mongoose.Types.ObjectId;
 var algorithm = 'aes-256-ctr',
 password = 'd6F3Efeq';
+var ObjectId = mongoose.Types.ObjectId;
 
 
 
@@ -273,7 +273,8 @@ router.get('/remove-accepted-proposal/:id', (req, res, next) =>
         console.log("inside student");
         //next();
         ProjectSubmit.findOneAndUpdate({ _id: id },
-	 { "$set": { "pending": true, "status": "Not Started"}},
+     { "$set": { "pending": true, "status": "Not Started",
+     "supervisorName": "Supervisor name will be added here when proposal is accepted"}},
 	 function(err, projectSubmit) {
         console.log("inside proposal");
             if (err) {
@@ -300,57 +301,13 @@ router.get('/remove-accepted-proposal/:id', (req, res, next) =>
 
                         }
                     }
-
-
-
-
-
                     console.log(nameOfSupervisorForRemove);
                     res.redirect(`/supervisor-list`);
                 });
             }
         });
     });
-    // ProjectSubmit.findOneAndUpdate(
-    // {_id : id},{pending: true},function(err, projectSubmit) 
-    //     {
-    //         if(err){
-    //         console.log(err);
-    //         return res.send(err);
-    //         }else{
-    //             nameOfSupervisorForRemove = projectSubmit.supervisorName;   
-    //             Supervisor.findOne({name : nameOfSupervisorForRemove}).then((supervisor) => {
-
-    //                     for(var i=0; i<supervisor.proposals.length; i++)
-    //                     {
-    //                         if(supervisor.proposals[i] == id)
-    //                         {
-
-    //                             console.log("found");
-    //                              Supervisor.findOneAndUpdate(
-    //                                 {"name": nameOfSupervisorForRemove},
-    //                                 { $pull: {"proposals": id}},
-    //                                 {  safe: true, upsert: true},
-    //                                   function(err, supervisor) {
-    //                                     if(err){
-    //                                        console.log(err);
-    //                                        return res.send(err);
-    //                                     }
-    //                                 });  
-    //                                 break;                 
-
-    //                         }
-    //                     }
-
-
-
-
-
-    //                 console.log(nameOfSupervisorForRemove);
-    //                 res.redirect(`/supervisor-list`);
-    //             });
-    //         }
-    // });
+    
 
 
 
@@ -427,11 +384,45 @@ router.get('/all-student', (req, res, next) => {
 });
 
 //
-// router.get('/export-students', (req,res,next) => {
-//     ProjectSubmit.find().then((exportStudents) => {
-//         res.render('main/tables', { exportStudents: exportStudents, title: 'Export Students' });
-//     });
-// });
+router.get('/defense-schedule', (req,res,next) => {
+    
+    ProjectSubmit.find().then((defense) => {
+        var starting_time = 10;
+        var ending_time = 15;
+        var duration = .3000000000001;
+        var starting = [];
+        var ending = [];
+        var count = 0;
+        for (var i = starting_time;i<ending_time; i+=duration)
+        {
+          
+            var x = Math.round(i);
+            var y = i.toFixed(2);
+            var z = parseInt(y);
+            
+            if (y == z+.60)
+            {
+                
+                i = x++;
+                
+            }
+           
+            starting.push(i.toFixed(2));
+           
+            if(count > 0)
+            {
+                ending.push(i.toFixed(2));
+            }
+            count ++;
+            
+    
+        }
+        console.log(`Starting time :${starting}`);
+        console.log(`Ending time :${ending}`);
+        res.render('main/export', { defense: defense, title: 'Defense Schedule'});
+    });
+    
+});
 
 
 

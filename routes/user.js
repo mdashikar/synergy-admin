@@ -7,6 +7,8 @@ const mailer = require('../misc/mailer');
 const Invite = require('../models/invite');
 var async = require('async');
 var crypto = require('crypto');
+var algorithm = 'aes-256-ctr',
+password = 'd6F3Efeq';
 const Supervisor = require('../models/supervisor');
 
 var value = "hi";
@@ -81,11 +83,25 @@ router.post('/invite-supervisor', (req,res,next) => {
             req.flash('errors', 'Already invitation sent');
             res.redirect('/');
         }else{
+          
+
+
             var invite = new Invite();
             var email = req.body.invite_email;
 
             invite.email = email;
             invite.secretToken = secretToken;
+
+
+            function encrypt(text){
+              var cipher = crypto.createCipher(algorithm,password)
+              var crypted = cipher.update(text,'utf8','hex')
+              crypted += cipher.final('hex');
+              return crypted;
+              };
+              console.log(email);
+              var encryptEmail = encrypt(email);
+              console.log(encryptEmail);
 
             invite.save(function(err){
                 
@@ -96,7 +112,7 @@ router.post('/invite-supervisor', (req,res,next) => {
                     This is a supervisor invitation from CSE department of Leading University
                     to supervise third year and final year project.<br/><br/>
                     To register as a supervisor please go through the following link : 
-                    http://s-supervisor.herokuapp.com/signup-supervisor/${secretToken} <br/><br/><br/>
+                    http://s-supervisor.herokuapp.com/signup-supervisor/${secretToken}/${encryptEmail} <br/><br/><br/>
                                         
                     Have a good day! <br/><br/>
                     Regards, <br/>
@@ -223,6 +239,7 @@ router.post('/reset-password/:token', function(req, res) {
   });
 
 
+  
 
 
 module.exports = router;

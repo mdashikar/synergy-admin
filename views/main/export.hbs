@@ -55,6 +55,7 @@
                     <div class="card-header d-flex align-items-center">
                       <h3 class="h4">Export Demo</h3>
                     </div>
+                    {{#if students}}
                     <div class="card-body">
                         <button id="exportButton" class="btn btn-md btn-danger clearfix pull-right"><span class="fa fa-file-pdf-o"></span> Export to PDF</button>
                       <table class="table table-striped table-hover exportTable" id="example">
@@ -95,6 +96,54 @@
                           {{/each}}
                       </table>
                     </div>
+                    {{/if}}
+
+
+                    {{#if defense}}
+                    <div class="card-body">
+                        <button id="exportButton" class="btn btn-md btn-danger clearfix pull-right"><span class="fa fa-file-pdf-o"></span> Export to PDF</button>
+                      <table class="table table-striped table-hover exportTable" id="example">
+                        <thead>
+                          <tr>
+                            
+                                <th>#</th>
+                                <th>Projects</th>
+                                <th>Name</th>
+                                <th>Id</th>
+                                <th>Supervisor</th>
+                                <th>Starting time</th>
+                                <th>Ending time</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{#each defense}}
+
+
+                            <tr>
+                              
+                              
+                              <th scope="row">  {{@key}}</th>
+                              <td>{{projectName}}</td>
+                              <td>{{memberName}}</td>
+                              <td>{{memberId}}</td>
+                              <td>{{supervisorName}}</td>
+                              <td>{{starting}}</td>   
+                              <td>{{ending}}</td>
+                             
+                             
+                            </tr> 
+                
+                          
+                          {{/each}}
+                          
+                              
+                           
+                        
+                      </table>
+                    </div>
+                    {{/if}}
+
+
                   </div>
                 </div>
 </div>

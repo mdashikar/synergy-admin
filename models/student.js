@@ -12,7 +12,9 @@ const StudentSchema = new Schema({
      type: Schema.Types.ObjectId, ref: 'Boards'
   }],
   proposal_id : String,
-  secretToken : String
+  secretToken : String,
+  resetPasswordToken : {type : String},
+  resetPasswordExpires : {type : Date}
 });
 
 StudentSchema.pre('save', function(next) {
