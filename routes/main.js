@@ -105,96 +105,120 @@ router.get('/template', template.get);
 router.post('/registered_user', upload.post);
 
 router.get('/proposals/:id', (req, res, next) => {
-    var id = req.params.id;
 
-
-    ProjectSubmit.findById(id).then((projectSubmit) => {
-
-        //res.render('main/proposal-des', {title: req.params.projectName, projectSubmit: projectSubmit});
-        if (projectSubmit.pending == false) {
-            async function getStatus() {
-                var counter = 0;
-                console.log("Inside proposal");
-                for (var i = 0; i < projectSubmit.memberId.length; i++) {
-                    await Student.findOne({ email: projectSubmit.memberEmail[i] }).then((student) => {
-                        if (student.proposal_id == id) {
-
-                            counter++;
-                            console.log("counting", counter);
-                            if (projectSubmit.memberId.length == counter) {
-                                projectSubmit.status = "Running";
-                                projectSubmit.save();
-                                console.log("status changed");
-
+    if(req.user)
+    {
+        var id = req.params.id;
+        ProjectSubmit.findById(id).then((projectSubmit) => {
+    
+            //res.render('main/proposal-des', {title: req.params.projectName, projectSubmit: projectSubmit});
+            if (projectSubmit.pending == false) {
+                async function getStatus() {
+                    var counter = 0;
+                    console.log("Inside proposal");
+                    for (var i = 0; i < projectSubmit.memberId.length; i++) {
+                        await Student.findOne({ email: projectSubmit.memberEmail[i] }).then((student) => {
+                            if (student.proposal_id == id) {
+    
+                                counter++;
+                                console.log("counting", counter);
+                                if (projectSubmit.memberId.length == counter) {
+                                    projectSubmit.status = "Running";
+                                    projectSubmit.save();
+                                    console.log("status changed");
+    
+                                }
                             }
-                        }
-
-                    });
+    
+                        });
+                    }
+                    // console.log(projectSubmit.memberId.length," : ",counter);
                 }
-                // console.log(projectSubmit.memberId.length," : ",counter);
+                getStatus();
+    
             }
-            getStatus();
-
-        }
-        Supervisor.find({}).then((supervisor) => {
-            res.render('main/proposal-des', { title: 'Synergy - Admin Dashboard', projectSubmit: projectSubmit, supervisor: supervisor });
+            Supervisor.find({}).then((supervisor) => {
+                res.render('main/proposal-des', { title: 'Synergy - Admin Dashboard', projectSubmit: projectSubmit, supervisor: supervisor });
+            });
+            // res.render('proposalList', { title: 'Synergy Proposal List'});                 
+        }, (e) => {
+            return res.status(404).send(e);
         });
-        // res.render('proposalList', { title: 'Synergy Proposal List'});                 
-    }, (e) => {
-        return res.status(404).send(e);
-    });
+    }
+    else
+    {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
 
 });
 
 
 router.post('/proposals/:id/reject-message', (req, res, next) => {
-    var message = req.body.message;
-    ProjectSubmit.findOne({ _id: req.params.id }).then((projectSubmit) => {
-        var emails = projectSubmit.memberEmail;
-        var projectName = req.params.projectName;
-
-        emails.forEach(function(email) {
-            console.log(email);
-
-            const html = `Dear Student,
-                <br/><br/>
-                ${message}
-                <br/>
-                All the best
-                <br/><br/><br/>
-                Regards,
-                <br/>                
-                Team Synergy`;
-
-            mailer.sendEmail('admin@synergy.com', email, 'Your proposal has been rejected', html);
-
+    if(req.user)
+    {
+        var message = req.body.message;
+        ProjectSubmit.findOne({ _id: req.params.id }).then((projectSubmit) => {
+            var emails = projectSubmit.memberEmail;
+            var projectName = req.params.projectName;
+    
+            emails.forEach(function(email) {
+                console.log(email);
+    
+                const html = `Dear Student,
+                    <br/><br/>
+                    ${message}
+                    <br/>
+                    All the best
+                    <br/><br/><br/>
+                    Regards,
+                    <br/>                
+                    Team Synergy`;
+    
+                mailer.sendEmail('admin@synergy.com', email, 'Your proposal has been rejected', html);
+    
+            });
+    
+            next();
+    
+    
         });
-
-        next();
-
-
-    });
-    ProjectSubmit.findOneAndRemove({ _id: req.params.id }).then((projectSubmit) => {
-        req.flash('success', 'Rejected');
-        res.redirect('/proposals');
-    });
+        ProjectSubmit.findOneAndRemove({ _id: req.params.id }).then((projectSubmit) => {
+            req.flash('success', 'Rejected');
+            res.redirect('/proposals');
+        });
+    }
+    else
+    {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
+    
 });
 
 
 //Removing supervisors from admin
 router.get('/remove-supervisor/:email', (req, res, next) => {
-    Invite.findOneAndRemove({ email: req.params.email }).then((invite) => {
-        next();
-    });
-    Supervisor.findOneAndRemove({ email: req.params.email }).then((supervisor) => {
-        res.redirect('/remove-supervisors');
-    });
+    if(req.user)
+    {
+        Invite.findOneAndRemove({ email: req.params.email }).then((invite) => {
+            next();
+        });
+        Supervisor.findOneAndRemove({ email: req.params.email }).then((supervisor) => {
+            res.redirect('/remove-supervisors');
+        });
+    }
+    else
+    {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
+    
 });
 
 var supervisorName;
 
 router.post('/proposals/assign/:id', (req, res, next) => {
-    Supervisor.findOneAndUpdate({ "name": req.body.name }, { $push: { "proposals": req.params.id } }, { safe: true, upsert: true },
+    if(req.user)
+    {
+        Supervisor.findOneAndUpdate({ "name": req.body.name }, { $push: { "proposals": req.params.id } }, { safe: true, upsert: true },
         function(err, supervisor) {
             if (err) {
                 console.log(err);
@@ -263,50 +287,64 @@ router.post('/proposals/assign/:id', (req, res, next) => {
         });
 
     });
+    }
+    else
+    {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
+    
 });
 var nameOfSupervisorForRemove;
 //Removing accepted proposals
 router.get('/remove-accepted-proposal/:id', (req, res, next) => 
 {
-    var id = req.params.id;
-    Student.findOneAndRemove({ proposal_id: id }).then((student) => {
-        console.log("inside student");
-        //next();
-        ProjectSubmit.findOneAndUpdate({ _id: id },
-     { "$set": { "pending": true, "status": "Not Started",
-     "supervisorName": "Supervisor name will be added here when proposal is accepted"}},
-	 function(err, projectSubmit) {
-        console.log("inside proposal");
-            if (err) {
-                console.log(err);
-                return res.send(err);
-            } else {
-                nameOfSupervisorForRemove = projectSubmit.supervisorName;
-                Supervisor.findOne({ name: nameOfSupervisorForRemove }).then((supervisor) => {
-                    console.log("inside supervisor");
-
-                    for (var i = 0; i < supervisor.proposals.length; i++) {
-                        if (supervisor.proposals[i] == id) {
-
-                            console.log("found");
-                            Supervisor.findOneAndUpdate({ "name": nameOfSupervisorForRemove }, { $pull: { "proposals": id } }, { safe: true, upsert: true },
-                                function(err, supervisor) {
-                                    if (err) {
-                                        console.log(err);
-                                        return res.send(err);
-                                    }
-                                    console.log("removed from supervisor");
-                                });
-                            break;
-
+    if(req.user)
+    {
+        var id = req.params.id;
+        Student.findOneAndRemove({ proposal_id: id }).then((student) => {
+            console.log("inside student");
+            //next();
+            ProjectSubmit.findOneAndUpdate({ _id: id },
+         { "$set": { "pending": true, "status": "Not Started",
+         "supervisorName": "Supervisor name will be added here when proposal is accepted"}},
+         function(err, projectSubmit) {
+            console.log("inside proposal");
+                if (err) {
+                    console.log(err);
+                    return res.send(err);
+                } else {
+                    nameOfSupervisorForRemove = projectSubmit.supervisorName;
+                    Supervisor.findOne({ name: nameOfSupervisorForRemove }).then((supervisor) => {
+                        console.log("inside supervisor");
+    
+                        for (var i = 0; i < supervisor.proposals.length; i++) {
+                            if (supervisor.proposals[i] == id) {
+    
+                                console.log("found");
+                                Supervisor.findOneAndUpdate({ "name": nameOfSupervisorForRemove }, { $pull: { "proposals": id } }, { safe: true, upsert: true },
+                                    function(err, supervisor) {
+                                        if (err) {
+                                            console.log(err);
+                                            return res.send(err);
+                                        }
+                                        console.log("removed from supervisor");
+                                    });
+                                break;
+    
+                            }
                         }
-                    }
-                    console.log(nameOfSupervisorForRemove);
-                    res.redirect(`/supervisor-list`);
-                });
-            }
+                        console.log(nameOfSupervisorForRemove);
+                        res.redirect(`/supervisor-list`);
+                    });
+                }
+            });
         });
-    });
+    }
+    else
+    {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
+    
     
 
 
@@ -378,49 +416,63 @@ router.get('/supervisor-list/:id', (req, res, next) => {
 
 
 router.get('/all-student', (req, res, next) => {
-    ProjectSubmit.find().then((students) => {
-        res.render('main/export', { students: students, title: 'All students' });
-    });
+    if(req.user)
+    {
+        ProjectSubmit.find().then((students) => {
+            res.render('main/export', { students: students, title: 'All students' });
+        });
+    }
+    else {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
+    
 });
 
 //
 router.get('/defense-schedule', (req,res,next) => {
-    
-    ProjectSubmit.find().then((defense) => {
-        var starting_time = 10;
-        var ending_time = 15;
-        var duration = .3000000000001;
-        var starting = [];
-        var ending = [];
-        var count = 0;
-        for (var i = starting_time;i<ending_time; i+=duration)
-        {
-          
-            var x = Math.round(i);
-            var y = i.toFixed(2);
-            var z = parseInt(y);
-            
-            if (y == z+.60)
+    if(req.user)
+    {
+        ProjectSubmit.find().then((defense) => {
+            var starting_time = 10;
+            var ending_time = 15;
+            var duration = .3000000000001;
+            var starting = [];
+            var ending = [];
+            var count = 0;
+            for (var i = starting_time;i<ending_time; i+=duration)
             {
+              
+                var x = Math.round(i);
+                var y = i.toFixed(2);
+                var z = parseInt(y);
                 
-                i = x++;
+                if (y == z+.60)
+                {
+                    
+                    i = x++;
+                    
+                }
+               
+                starting.push(i.toFixed(2));
+               
+                if(count > 0)
+                {
+                    ending.push(i.toFixed(2));
+                }
+                count ++;
                 
+        
             }
-           
-            starting.push(i.toFixed(2));
-           
-            if(count > 0)
-            {
-                ending.push(i.toFixed(2));
-            }
-            count ++;
-            
+            console.log(`Starting time :${starting}`);
+            console.log(`Ending time :${ending}`);
+            res.render('main/export', { defense: defense, title: 'Defense Schedule'});
+        });
+    }
+    else {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
     
-        }
-        console.log(`Starting time :${starting}`);
-        console.log(`Ending time :${ending}`);
-        res.render('main/export', { defense: defense, title: 'Defense Schedule'});
-    });
+    
     
 });
 

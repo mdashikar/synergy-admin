@@ -73,7 +73,8 @@ router.get('/user-logout', (req,res, next) => {
 
 
 router.post('/invite-supervisor', (req,res,next) => {
-    
+  if(req.user)
+  {
     var secretToken = randomstring.generate();
     
       
@@ -131,6 +132,14 @@ router.post('/invite-supervisor', (req,res,next) => {
              
         }
     });
+  }
+  else
+  {
+      res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+  
+  }
+    
+    
                  
     
 
