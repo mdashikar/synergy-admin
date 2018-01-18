@@ -3,6 +3,8 @@ var json2csv = require('json2csv');
 exports.get = function(req, res) {
 
    var fields = [
+       'year',
+       'semester',
        'student_id',
        'course_code'
    ]; 

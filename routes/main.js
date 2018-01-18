@@ -14,6 +14,7 @@ const randomstring = require('randomstring');
 const passportConfig = require('../config/passport');
 const Invite = require('../models/invite');
 const Student = require('../models/student');
+const Schedule = require('../models/schedule_form');
 var crypto = require('crypto');
 var algorithm = 'aes-256-ctr',
 password = 'd6F3Efeq';
@@ -368,7 +369,7 @@ router.get('/supervisor-list', (req, res) => {
                         //console.log('Each Proposals id under supervisor', array[j]);
                         await ProjectSubmit.findById(array[j], function(err, result) {
                             if (err) return err;
-                            //console.log(result);
+                            console.log('Length ' + result.memberId.length);
                             //results +=  result.memberId.length;
                             count += result.memberId.length;
                         });
@@ -480,6 +481,25 @@ router.get('/defense-schedule', (req,res,next) => {
     
 });
 
+router.post('/schedule-form', (req, res, next) => {
+    var schedule = new Schedule();
+    schedule.startDate = req.body.startDate;
+    schedule.endDate = req.body.endDate;
+    var showNav = false;
+    if(req.body.startDate){
+        showNav = true;
+    } 
+    if(req.body.endDate){
+        setTimeout(() => {
+            showNav = false;
+        }, req.body.endDate);
+    }
+    console.log('Show nav bar', showNav);
+
+    schedule.save(function(err){
+        res.redirect('/');
+    })
+  });
 
 
 
