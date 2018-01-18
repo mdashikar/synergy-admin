@@ -437,7 +437,7 @@ router.get('/defense-schedule', (req,res,next) => {
             var ending_time = 15;
             var duration = .3000000000001;
             var starting = [];
-            var ending = [];
+            var ending = [];                                                                                 
             var count = 0;
             for (var i = starting_time;i<ending_time; i+=duration)
             {
@@ -460,11 +460,15 @@ router.get('/defense-schedule', (req,res,next) => {
                     ending.push(i.toFixed(2));
                 }
                 count ++;
+                var con = starting.concat(ending);
+             
+                
                 
         
             }
-            console.log(`Starting time :${starting}`);
-            console.log(`Ending time :${ending}`);
+           // console.log(`Starting time :${starting}`);
+           // console.log(`Ending time :${ending}`);
+           
             res.render('main/export', { defense: defense, title: 'Defense Schedule'});
         });
     }
