@@ -29,7 +29,7 @@ var ObjectId = mongoose.Types.ObjectId;
 router.route('/')
     .get((req, res, next) => {
         if (req.user) {
-            ProjectSubmit.find().then((projectSubmit) => {
+            ProjectSubmit.find().sort({_id: -1}).limit(5).then((projectSubmit) => {
 
                 res.render('main/index', {
                     title: 'Synergy - Admin Dashboard',
@@ -542,6 +542,10 @@ router.get('/defense-schedule', (req,res,next) => {
     
     
 });
+
+router.get('/test', (req, res, next) => {
+    res.render('main/test_table');
+})
 
 router.post('/schedule-form', (req, res, next) => {
     var schedule = new Schedule();

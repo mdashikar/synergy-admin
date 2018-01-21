@@ -13,10 +13,6 @@
                     </div>
                     {{#if students}}
                     <div class="card-body">
-                      <button  class="btn btn-md btn-success clearfix pull-right" onclick="exportexcel()" >
-                        <span class="fa fa-file-pdf-o"> </span> Export to Excel</button>
-
-                        <button id="exportButton" class="btn btn-md btn-danger clearfix pull-right"><span class="fa fa-file-pdf-o"></span> Export to PDF</button>
                       <table class="table table-striped table-hover exportTable myTable" id="example">
                         <thead>
                           <tr>
@@ -60,7 +56,7 @@
 
                     {{#if defense}}
                     <div class="card-body">
-                        <button id="exportButton" class="btn btn-md btn-danger clearfix pull-right"><span class="fa fa-file-pdf-o"></span> Export to PDF</button>
+    
                       <table class="table table-striped table-hover exportTable" id="example">
                         <thead>
                           <tr>
