@@ -3,6 +3,7 @@ const User = require('../models/user');
 const Supervisor = require('../models/supervisor');
 const _ = require('lodash');
 const { ProjectSubmit } = require('../models/proposals');
+const Defense = require('../models/defense');
 var template = require('../server/template');
 var upload = require('../server/upload');
 const async = require('async');
@@ -12,6 +13,7 @@ const mailer = require('../misc/mailer');
 const passport = require('passport');
 const randomstring = require('randomstring');
 const passportConfig = require('../config/passport');
+const moment = require('moment');
 const Invite = require('../models/invite');
 const Student = require('../models/student');
 const Schedule = require('../models/schedule_form');
@@ -419,9 +421,13 @@ router.get('/supervisor-list/:id', (req, res, next) => {
 router.get('/all-student', (req, res, next) => {
     if(req.user)
     {
-        ProjectSubmit.find().then((students) => {
-            res.render('main/export', { students: students, title: 'All students' });
-        });
+        ProjectSubmit.find({pending:false}).then((students) => {
+            
+            res.render('main/export', { students: students, title: 'All students' });     
+        });  
+        
+
+        
     }
     else {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
@@ -433,45 +439,101 @@ router.get('/all-student', (req, res, next) => {
 router.get('/defense-schedule', (req,res,next) => {
     if(req.user)
     {
-        ProjectSubmit.find().then((defense) => {
-            var starting_time = 10;
-            var ending_time = 15;
-            var duration = .3000000000001;
-            var starting = [];
-            var ending = [];                                                                                 
-            var count = 0;
-            for (var i = starting_time;i<ending_time; i+=duration)
-            {
-              
-                var x = Math.round(i);
-                var y = i.toFixed(2);
-                var z = parseInt(y);
-                
-                if (y == z+.60)
-                {
+        // var starting_time = 12;
+        // var ending_time = 18;
+        // var duration = .3000000000001;
+        // var Day = 1;
+        // var starting = [];
+        // var ending = [];                                                                                 
+        // var count = 0;
+        // var start = starting_time;
+      
+        //  ProjectSubmit.find().then((projectSubmit) => {
+        //     async function getResult()
+        //     {
+        //        await projectSubmit.forEach(function(i) {
+                   
                     
-                    i = x++;
+
+        //         var x = Math.round(starting_time);
+        //         var y = starting_time.toFixed(2);
+        //         var z = parseInt(y);
+        //         if (y == z+.60)
+        //         {
                     
-                }
+        //             starting_time = x++;
+                    
+        //         }
+        //         if(starting_time == ending_time)
+        //         {
+        //             Day++;
+        //             starting_time = start;
+        //         }
+
+        //         var a = Math.round(starting_time+duration);
+        //         var b = (starting_time+duration).toFixed(2);
+        //         var c = parseInt(b);
+
+        //         if(b == c+.60)
+        //         {
+        //             b = a++;
+        //         }
+                  
+                   
+                   
+        //         var defense = new Defense();
+        //         defense.projectName = i.projectName;
+        //         defense.memberName = i.memberName;
+        //         defense.memberId = i.memberId;
+        //         defense.supervisorName = i.supervisorName;
+        //         defense.startingTime = starting_time.toFixed(2);
+        //         defense.endingTime = b;
+        //         defense.day = "Day : "+Day; 
+        //         defense.proposal_id = i._id;
                
-                starting.push(i.toFixed(2));
+        //         console.log(starting_time.toFixed(2)+" : "+b);
+                 
+        //         starting_time = starting_time+duration;
+        //         if(starting_time == ending_time)
+        //         {
+        //             Day++;
+        //             starting_time = start;
+        //         }
+        //         defense.save();
                
-                if(count > 0)
-                {
-                    ending.push(i.toFixed(2));
-                }
-                count ++;
-                var con = starting.concat(ending);
-             
                 
                 
-        
-            }
-           // console.log(`Starting time :${starting}`);
-           // console.log(`Ending time :${ending}`);
+        //     });
+        //     }
+            
+        //     getResult();
+            
+        //     console.log("in");
+        //     Defense.find().then((defense) => {
+        //         res.render('main/export', { defense: defense, title: 'Defense Schedule'});
+        //     });
            
-            res.render('main/export', { defense: defense, title: 'Defense Schedule'});
-        });
+          
+        // });
+        // var day = moment("2018-02-20 17:00","YYYY-MM-DD HH:mm").format('LT');
+        // var day1 = moment('2018-02-20 17:00:00');
+        // var start = moment("10:00","HH:mm").format('LT');
+        // var end = moment("17:00","HH:mm").format('LT');
+        // var  lunch = moment("13:00","HH:mm").format('LT');
+        // var duration = moment(day1).add(.5, 'hours').format('LLL');
+        //  if(day == end)
+        //  {
+        //      console.log("yes");
+        //  }
+        // console.log(start);
+        // console.log(duration);
+        var startTime = moment("2018-02-20 17:00","YYYY-MM-DD HH:mm");
+        var endTime = moment("17:00","HH:mm").format('LT');
+        var lunchTime = moment("13:00","HH:mm").format('LT');
+        var duration = .5;
+        
+        
+        
     }
     else {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
@@ -485,16 +547,20 @@ router.post('/schedule-form', (req, res, next) => {
     var schedule = new Schedule();
     schedule.startDate = req.body.startDate;
     schedule.endDate = req.body.endDate;
-    var showNav = false;
+   // schedule.showNav = false;
     if(req.body.startDate){
-        showNav = true;
+        schedule.showNav = true;
     } 
     if(req.body.endDate){
         setTimeout(() => {
-            showNav = false;
+            Schedule.findOneAndUpdate({"_id": schedule._id}, {$set: {"showNav": false}},  function(err,doc) {
+                if (err) { throw err; }
+                else { console.log("Updated"); }
+              });  
+           
         }, req.body.endDate);
     }
-    console.log('Show nav bar', showNav);
+    console.log('Show nav bar', schedule.showNav);
 
     schedule.save(function(err){
         res.redirect('/');
