@@ -7,7 +7,7 @@ const ScheduleSchema = new Schema({
     endDate: Date,
     year: String,
     semester: String,
-    showNav: false
+    showNav: {default: false}
 });
 
 module.exports = mongoose.model('Schedule', ScheduleSchema);

@@ -1,1 +1,9 @@
 /* your styles go here */
+.select_tag select
+{
+    height: 42px !important;
+}
+input[type=time]
+{
+    height: 42px !important;
+}

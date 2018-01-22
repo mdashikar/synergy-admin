@@ -3,7 +3,7 @@ const User = require('../models/user');
 const Supervisor = require('../models/supervisor');
 const _ = require('lodash');
 const { ProjectSubmit } = require('../models/proposals');
-const Defense = require('../models/defense');
+const registered = require('../models/registered_user');
 var template = require('../server/template');
 var upload = require('../server/upload');
 const async = require('async');
@@ -436,102 +436,101 @@ router.get('/all-student', (req, res, next) => {
 });
 
 //
-router.get('/defense-schedule', (req,res,next) => {
+// router.get('/defense-schedule', (req,res,next) => {
+//     if(req.user)
+//     {
+//         res.render('main/export', { projectSubmit: projectSubmit, title: 'Defense Schedule'});
+//     }
+// });
+router.post('/defense-schedule', (req,res,next) => {
     if(req.user)
     {
-        // var starting_time = 12;
-        // var ending_time = 18;
-        // var duration = .3000000000001;
-        // var Day = 1;
-        // var starting = [];
-        // var ending = [];                                                                                 
-        // var count = 0;
-        // var start = starting_time;
-      
-        //  ProjectSubmit.find().then((projectSubmit) => {
-        //     async function getResult()
-        //     {
-        //        await projectSubmit.forEach(function(i) {
-                   
-                    
+        console.log("date : ",req.body.startingDate);
+        console.log("start : ",req.body.startingTime);
+        console.log("end : ",req.body.endingTime);
+        console.log("lunch : ",req.body.lunchTime);
+        console.log("duration : ",req.body.duration);
+        console.log("semester : ",req.body.semester);
+        console.log("year : ",req.body.year);
+        console.log("course Code : ",req.body.courseCode);
 
-        //         var x = Math.round(starting_time);
-        //         var y = starting_time.toFixed(2);
-        //         var z = parseInt(y);
-        //         if (y == z+.60)
-        //         {
-                    
-        //             starting_time = x++;
-                    
-        //         }
-        //         if(starting_time == ending_time)
-        //         {
-        //             Day++;
-        //             starting_time = start;
-        //         }
+        var flag = true;
+        var date = req.body.startingDate;
+        var sTime = req.body.startingTime;
+        var a = date + " " + sTime;
+        var startTime = moment(a,"MM-DD-YYYYY HH:mm");
+        console.log("startTime: ",startTime);
 
-        //         var a = Math.round(starting_time+duration);
-        //         var b = (starting_time+duration).toFixed(2);
-        //         var c = parseInt(b);
+        var eTime = req.body.endingTime;
+        var endTime = moment(eTime,"HH:mm").format('LT');
+        console.log("endTime: ",endTime);
 
-        //         if(b == c+.60)
-        //         {
-        //             b = a++;
-        //         }
-                  
-                   
-                   
-        //         var defense = new Defense();
-        //         defense.projectName = i.projectName;
-        //         defense.memberName = i.memberName;
-        //         defense.memberId = i.memberId;
-        //         defense.supervisorName = i.supervisorName;
-        //         defense.startingTime = starting_time.toFixed(2);
-        //         defense.endingTime = b;
-        //         defense.day = "Day : "+Day; 
-        //         defense.proposal_id = i._id;
-               
-        //         console.log(starting_time.toFixed(2)+" : "+b);
-                 
-        //         starting_time = starting_time+duration;
-        //         if(starting_time == ending_time)
-        //         {
-        //             Day++;
-        //             starting_time = start;
-        //         }
-        //         defense.save();
-               
-                
-                
-        //     });
-        //     }
-            
-        //     getResult();
-            
-        //     console.log("in");
-        //     Defense.find().then((defense) => {
-        //         res.render('main/export', { defense: defense, title: 'Defense Schedule'});
-        //     });
-           
-          
-        // });
-        // var day = moment("2018-02-20 17:00","YYYY-MM-DD HH:mm").format('LT');
-        // var day1 = moment('2018-02-20 17:00:00');
-        // var start = moment("10:00","HH:mm").format('LT');
-        // var end = moment("17:00","HH:mm").format('LT');
-        // var  lunch = moment("13:00","HH:mm").format('LT');
-        // var duration = moment(day1).add(.5, 'hours').format('LLL');
-        //  if(day == end)
-        //  {
-        //      console.log("yes");
-        //  }
-        // console.log(start);
-        // console.log(duration);
-        var startTime = moment("2018-02-20 17:00","YYYY-MM-DD HH:mm");
-        var endTime = moment("17:00","HH:mm").format('LT');
-        var lunchTime = moment("13:00","HH:mm").format('LT');
-        var duration = .5;
+        var lTime = req.body.lunchTime;
+        var lunchTime = moment(lTime,"HH:mm").format('LT');
+        console.log("LunchTime: ",lunchTime);
+
+        var duration = req.body.duration;
+        var temp = startTime;
+        var year = req.body.year;
+        var semester = req.body.semester;
+        var courseCode = req.body.courseCode;
+
+       
         
+
+        
+        
+     
+       
+        // var flag = true;
+        // var check = true;
+        // var startTime = moment("2018-02-20 13:00","YYYY-MM-DD HH:mm");
+        // var endTime = moment("14:00","HH:mm").format('LT');
+        // var lunchTime = moment("16:30","HH:mm").format('LT');
+        // var duration = .5;
+        // var temp = startTime;
+     
+        ProjectSubmit.find({projectCourseCode : courseCode,
+            year : year,
+            semester : semester,
+            pending : false}).then((projectSubmit) => 
+        // ProjectSubmit.find({}).then((projectSubmit) =>                                                                                         
+        {
+            projectSubmit.forEach(function(i) 
+            {
+                if(flag == true && startTime.format('LT') == lunchTime)
+                {
+                    console.log("in");
+                    startTime = moment(startTime).add(1, 'hours');
+                    flag = false;
+                   
+
+                }
+                
+                    i.time = startTime.format('LLL');
+                    i.save();
+                    startTime = moment(startTime).add(duration, 'hours');
+                    
+                   
+                
+                if(endTime == startTime.format('LT'))
+                {
+                    console.log("in2");
+                    startTime = temp;
+                    startTime = moment(startTime).add(1, 'day');
+                    temp = startTime;
+                    flag = true;
+                }
+              
+            });
+
+            res.render('main/export', { projectSubmit: projectSubmit, title: 'Defense Schedule'});
+            //res.redirect('/defense-schedule');
+        });
+        
+
+        
+
         
         
     }
