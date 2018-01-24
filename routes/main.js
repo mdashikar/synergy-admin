@@ -1072,6 +1072,7 @@ router.post('/defense-schedule', (req,res,next) => {
         var year = req.body.year;
         var semester = req.body.semester;
         var courseCode = req.body.courseCode;
+  
 
        
         
@@ -1096,15 +1097,8 @@ router.post('/defense-schedule', (req,res,next) => {
         {
             projectSubmit.forEach(function(i) 
             {
-                if(endTime == startTime.format('LT'))
-                {
-                    console.log("in2");
-                    startTime = temp;
-                    startTime = moment(startTime).add(1, 'day');
-                    temp = startTime;
-                    flag = true;
-                }
-                if(flag == true && startTime.format('LT') == lunchTime)
+                
+                if(flag == true && ( (startTime.format('LT') == lunchTime) || (startTime.format('LT') > lunchTime)) )
                 {
                     console.log("in");
                     startTime = moment(startTime).add(1, 'hours');
@@ -1112,7 +1106,14 @@ router.post('/defense-schedule', (req,res,next) => {
                    
 
                 }
-                
+                if( (endTime == startTime.format('LT')) || (endTime < startTime.format('LT')) )
+                {
+                    console.log("in2");
+                    startTime = temp;
+                    startTime = moment(startTime).add(1, 'day');
+                    temp = startTime;
+                    flag = true;
+                }
                     i.time = startTime.format('LLL');
                     i.save();
                     startTime = moment(startTime).add(duration, 'hours');
