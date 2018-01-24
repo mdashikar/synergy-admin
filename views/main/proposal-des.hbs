@@ -45,20 +45,22 @@
                     <h3>Abstract:</h3>
                     <br>
                     <p>
-                         This application will provide us an easy way to manage our projects. It will establish a good collaboration between students and supervisor. This application will also store all the projects in a project showcase. The users can access the showcase and there will be overview of all completed projects done so far in this application. 
+                        {{projectSubmit.projectAbstract}}
+                         {{!-- This application will provide us an easy way to manage our projects. It will establish a good collaboration between students and supervisor. This application will also store all the projects in a project showcase. The users can access the showcase and there will be overview of all completed projects done so far in this application.  --}}
                     </p>
                     <br>
     <!--Objective:-->        
                     <h3>Objective:</h3>
                     <br>
                     <p>
-                      The goal of the project is to develop a web based application named "Synergy" which can be accessed via web browser. The platform will provide students to submit their project proposals and project board can assign a supervisor. A supervisor can create project board and also add students to that board. Synergy is a collaboration tool that will organize projects into boards. In one glance, Synergy will show you what's being worked on, who's working on what, and where something is in a process. All projects, tasks, all of team-organized, accounted for, and easily visible at a glance. New users can instantly understand the list and card metaphor and can be working on Synergy within minutes. 
+                        {{projectSubmit.projectObject}}
+                      {{!-- The goal of the project is to develop a web based application named "Synergy" which can be accessed via web browser. The platform will provide students to submit their project proposals and project board can assign a supervisor. A supervisor can create project board and also add students to that board. Synergy is a collaboration tool that will organize projects into boards. In one glance, Synergy will show you what's being worked on, who's working on what, and where something is in a process. All projects, tasks, all of team-organized, accounted for, and easily visible at a glance. New users can instantly understand the list and card metaphor and can be working on Synergy within minutes.  --}}
                     </p>
                     <br>
     <!--Key feature-->        
                     <h3>Key features:</h3>
                     <br>
-                    <ul class="list-unstyled">
+                    {{!-- <ul class="list-unstyled">
                         <li>-Project Planning</li>
                         <li>-Collaboration</li>
                         <li>-File Sharing</li>
@@ -66,30 +68,34 @@
                         <li>-Milestone Tracking </li>
                         <li>-Task Management</li>
                         <li>-Resource Management </li>
-                    </ul>
+                    </ul> --}}
+                    <p>{{projectSubmit.projectKeyFeatures}}</p>
                     <br>
     <!--Number of module:-->        
                     <h3>Number of Modules:</h3>
                     <br>
-                    <p>The system after careful analysis has been identified to be presented with the following modules: </p>
+                    {{!-- <p>The system after careful analysis has been identified to be presented with the following modules: </p>
                     <ul class="list-unstyled">
                         <li>-User Module</li>
                         <li>-Project-board Module</li>
-                    </ul>
+                    </ul> --}}
+                   <p>{{projectSubmit.projectNumberOfModules}}</p> 
                     <br>
     <!--Software requirement:-->        
                     <h3>Software Requirements:</h3>
                     <br>
-                    <p>Programming Language: JavaScript, php, ruby </p>
+                    <p>{{projectSubmit.projectTools}}</p>
+                    {{!-- <p>Programming Language: JavaScript, php, ruby </p>
                     <p>User Interface: HTML, CSS </p>
                     <p>IDE/Workbench: vs code, brackets </p>
                     <p>Database : MySQL </p>
-                    <p>Version Control System : Git</p>
+                    <p>Version Control System : Git</p> --}}
                     <br>
     <!--Conclusion:-->        
                     <h3>Conclusion:</h3>
                     <br>
-                    <p>Our main purpose is to develop this platform for students like us, developers, company etc. If we get proper support from the authority then we can develop this platform better in near future. </p>
+                    <p>{{projectSubmit.projectConclusion}}</p>
+                    {{!-- <p>Our main purpose is to develop this platform for students like us, developers, company etc. If we get proper support from the authority then we can develop this platform better in near future. </p> --}}
                     {{#if projectSubmit.pending}}
                         <div class="btn-group">
                             <a type="button" data-toggle="modal" data-target="#myModal2" class="btn btn-success">Approve</a>
