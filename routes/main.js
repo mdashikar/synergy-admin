@@ -482,7 +482,7 @@ router.get('/remove-supervisor/:id', (req, res, next) => {
 
         //     res.redirect('/remove-supervisors');
         // });
-        var email;
+        
         Supervisor.findOneAndRemove({ _id: req.params.id }).then((supervisor) => {
             console.log(supervisor);
                 res.redirect('/remove-supervisors');     
