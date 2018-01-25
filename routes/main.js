@@ -69,6 +69,7 @@ router.get('/remove-supervisors', (req, res, next) => {
 
         }, (e) => {
             res.status(404).send(e);
+
         });
 
 
@@ -483,16 +484,10 @@ router.get('/remove-supervisor/:id', (req, res, next) => {
         // });
         var email;
         Supervisor.findOneAndRemove({ _id: req.params.id }).then((supervisor) => {
-           email = supervisor.email; 
-           console.log('email : ',email);
-         //  next();
-
-            //console.log(supervisor);
+            console.log(supervisor);
+                res.redirect('/remove-supervisors');     
         });
-        Invite.findOneAndRemove({ email : email }).then((invite) => {
-            console.log('email : ',email);
-            res.redirect('/remove-supervisors');
-        });
+       
     }
     else
     {
