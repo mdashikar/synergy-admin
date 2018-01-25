@@ -17,6 +17,7 @@ const moment = require('moment');
 const Invite = require('../models/invite');
 const Student = require('../models/student');
 const Schedule = require('../models/schedule_form');
+var ontime = require("ontime");
 var crypto = require('crypto');
 var algorithm = 'aes-256-ctr',
 password = 'd6F3Efeq';
@@ -71,9 +72,6 @@ router.get('/remove-supervisors', (req, res, next) => {
             res.status(404).send(e);
 
         });
-
-
-
     } else {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
     }
@@ -482,12 +480,10 @@ router.get('/remove-supervisor/:id', (req, res, next) => {
 
         //     res.redirect('/remove-supervisors');
         // });
-        
-        Supervisor.findOneAndRemove({ _id: req.params.id }).then((supervisor) => {
+        Supervisor.findOneAndRemove({ _id: req.params.id }).then((supservisor) => {
             console.log(supervisor);
-                res.redirect('/remove-supervisors');     
+            res.redirect('/remove-supervisors');     
         });
-       
     }
     else
     {
@@ -1051,15 +1047,6 @@ router.post('/defense-schedule', (req,res,next) => {
         var year = req.body.year;
         var semester = req.body.semester;
         var courseCode = req.body.courseCode;
-  
-
-       
-        
-
-        
-        
-     
-       
         // var flag = true;
         // var check = true;
         // var startTime = moment("2018-02-20 13:00","YYYY-MM-DD HH:mm");
@@ -1097,19 +1084,11 @@ router.post('/defense-schedule', (req,res,next) => {
                     i.save();
                     startTime = moment(startTime).add(duration, 'hours');
                     
-                   
-                
-                
-              
             });
 
             res.render('main/export', { projectSubmit: projectSubmit, title: 'Defense Schedule'});
             //res.redirect('/defense-schedule');
         });
-        
-
-        
-
         
         
     }
@@ -1129,24 +1108,25 @@ router.post('/schedule-form', (req, res, next) => {
     var schedule = new Schedule();
     schedule.startDate = req.body.startDate;
     schedule.endDate = req.body.endDate;
-   // schedule.showNav = false;
-    if(req.body.startDate){
-        schedule.showNav = true;
-    } 
-    if(req.body.endDate){
-        setTimeout(() => {
-            Schedule.findOneAndUpdate({"_id": schedule._id}, {$set: {"showNav": false}},  function(err,doc) {
-                if (err) { throw err; }
-                else { console.log("Updated"); }
-              });  
-           
-        }, req.body.endDate);
-    }
-    console.log('Show nav bar', schedule.showNav);
-
+    schedule.showNav = req.body.showNav;
+    var time = new Date(req.body.endDate);
+    var endTime = time.getTime();
+    
     schedule.save(function(err){
+        console.log("Schedule Data", schedule);
+        if(err) return next(err);
         res.redirect('/');
-    })
+    });
+    console.log("Non - Blocking");
+
+    setTimeout(function(){
+        console.log('10');
+      Schedule.findOneAndRemove({ _id: schedule._id }, function(err, doc) {
+        if (err) {
+          throw err;
+        }
+      });
+    }, 10000000000);
   });
 
 
