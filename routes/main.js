@@ -471,7 +471,7 @@ router.post('/proposals/:id/reject-message', (req, res, next) => {
 
 
 //Removing supervisors from admin
-router.get('/remove-supervisor/:email', (req, res, next) => {
+router.get('/remove-supervisor/:id', (req, res, next) => {
     if(req.user)
     {
         // Invite.findOneAndRemove({ email: req.params.email }).then((invite) => {
@@ -481,35 +481,16 @@ router.get('/remove-supervisor/:email', (req, res, next) => {
 
         //     res.redirect('/remove-supervisors');
         // });
-        Supervisor.findOneAndRemove({ email: req.params.email }).then((supervisor) => {
-            supervisor.proposals.forEach(function(i) {
-                Student.findOneAndRemove({proposal_id : i}).then((student) => {
-                    ProjectSubmit.findOneAndUpdate({ _id: i },
-                        { "$set": { "pending": true, "status": "Not Started",
-                        "supervisorName": "Supervisor name will be added here when proposal is accepted"}},
-                        function(err, projectSubmit) 
-                        {
-                           console.log("inside proposal");
-                               if (err) {
-                                   console.log(err);
-                                   return res.send(err);
-                               } 
-                               console.log("done");
-                               next();
-                                //res.redirect('/remove-supervisors');
-                               
-                        });
-                        next();
-                        console.log("done2");
-                });
-               
-            });
-            next();
-            console.log("done3");
-            
+        var email;
+        Supervisor.findOneAndRemove({ _id: req.params.id }).then((supervisor) => {
+           email = supervisor.email; 
+           console.log('email : ',email);
+         //  next();
+
+            //console.log(supervisor);
         });
-        Invite.findOneAndRemove({ email: req.params.email }).then((invite) => {
-            
+        Invite.findOneAndRemove({ email : email }).then((invite) => {
+            console.log('email : ',email);
             res.redirect('/remove-supervisors');
         });
     }
@@ -525,24 +506,26 @@ router.get('/remove-supervisor/:email', (req, res, next) => {
 router.post('/proposals/assign/:id', (req, res, next) => {
     if(req.user)
     {
-        var supervisorName;
+      
         Supervisor.findOneAndUpdate({ "name": req.body.name }, { $push: { "proposals": req.params.id } }, { safe: true, upsert: true },
         function(err, supervisor) {
             if (err) {
                 console.log(err);
                 return res.send(err);
             } else {
-                supervisorName = supervisor.name;
+               
                 req.flash('success', 'Assigned Successfully');
                 res.redirect('/proposals');
             }
         });
 
     ProjectSubmit.findOne({ _id: req.params.id }).then((projectSubmit) => {
-        console.log("This is post approve id " + req.params.id);
+        console.log(projectSubmit);
+        console.log(req.body.name);
+        
         var id = projectSubmit._id;
         projectSubmit.pending = false;
-        projectSubmit.supervisorName = supervisorName;
+        projectSubmit.supervisorName = req.body.name;
         projectSubmit.save((err, projectSubmit) => {
             if (err) {
                 return res.status(500).send(err);
@@ -552,7 +535,7 @@ router.post('/proposals/assign/:id', (req, res, next) => {
 
             emails.forEach(function(email) {
                 console.log(email);
-                console.log(supervisorName);
+               
                     function encrypt(text){
                     var cipher = crypto.createCipher(algorithm,password)
                     var crypted = cipher.update(text,'utf8','hex')
@@ -804,9 +787,9 @@ router.post('/proposals/assign/:id', (req, res, next) => {
                         <br/><br/>
                        
                        Congratulations! We are very glad to inform you that your project proposal is accepted
-                       and your supervisor name is ${supervisorName}
+                       and your supervisor name is <strong> ${req.body.name} </strong>.
                        <br/>
-                       To register in synergy platform please go through the following link : <br>
+                       To register in synergy platform please go through the following link or click the button to activate your account : <br>
                        <a href="http://synergy-student.herokuapp.com/signup/${id}/${encryptEmail}/${secretToken}">http://synergy-student.herokuapp.com/signup/</a>
                        <br/>
                                           
@@ -895,6 +878,7 @@ router.post('/proposals/assign/:id', (req, res, next) => {
     }
     
 });
+
 var nameOfSupervisorForRemove;
 //Removing accepted proposals
 router.get('/remove-accepted-proposal/:id', (req, res, next) => 
@@ -909,14 +893,14 @@ router.get('/remove-accepted-proposal/:id', (req, res, next) =>
          { "$set": { "pending": true, "status": "Not Started",
          "supervisorName": "Supervisor name will be added here when proposal is accepted"}},
          function(err, projectSubmit) {
-            console.log("inside proposal");
+            console.log("inside proposal", projectSubmit);
                 if (err) {
                     console.log(err);
                     return res.send(err);
                 } else {
                     nameOfSupervisorForRemove = projectSubmit.supervisorName;
                     Supervisor.findOne({ name: nameOfSupervisorForRemove }).then((supervisor) => {
-                        console.log("inside supervisor");
+                        console.log("inside supervisor", supervisor);
     
                         for (var i = 0; i < supervisor.proposals.length; i++) {
                             if (supervisor.proposals[i] == id) {
@@ -928,7 +912,7 @@ router.get('/remove-accepted-proposal/:id', (req, res, next) =>
                                             console.log(err);
                                             return res.send(err);
                                         }
-                                        console.log("removed from supervisor");
+                                        console.log("removed from supervisor", supervisor);
                                     });
                                 break;
     
