@@ -480,12 +480,10 @@ router.get('/remove-supervisor/:id', (req, res, next) => {
 
         //     res.redirect('/remove-supervisors');
         // });
-        var email;
-        Supervisor.findOneAndRemove({ _id: req.params.id }).then((supervisor) => {
+        Supervisor.findOneAndRemove({ _id: req.params.id }).then((supservisor) => {
             console.log(supervisor);
-                res.redirect('/remove-supervisors');     
+            res.redirect('/remove-supervisors');     
         });
-       
     }
     else
     {
@@ -1091,10 +1089,6 @@ router.post('/defense-schedule', (req,res,next) => {
             res.render('main/export', { projectSubmit: projectSubmit, title: 'Defense Schedule'});
             //res.redirect('/defense-schedule');
         });
-        
-
-        
-
         
         
     }
