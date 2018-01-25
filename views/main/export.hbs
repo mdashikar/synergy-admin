@@ -54,7 +54,7 @@
                     {{/if}}
 
 
-                    {{#if defense}}
+                    {{#if projectSubmit}}
                     <div class="card-body">
     
                       <table class="table table-striped table-hover exportTable" id="example">
@@ -67,11 +67,11 @@
                                 <th>Id</th>
                                 <th>Supervisor</th>
                                 <th>Time</th>
-                                {{!-- <th>Ending time</th> --}}
+                                
                           </tr>
                         </thead>
                         <tbody>
-                          {{#each defense}}
+                          {{#each projectSubmit}}
 
 
                             <tr>
@@ -82,8 +82,8 @@
                               <td>{{memberName}}</td>
                               <td>{{memberId}}</td>
                               <td>{{supervisorName}}</td>
-                              <td>{{this._v}}</td>   
-                              {{!-- <td>{{ending}}</td> --}}
+                              <td>{{time}}</td>   
+                              
                              
                              
                             </tr> 

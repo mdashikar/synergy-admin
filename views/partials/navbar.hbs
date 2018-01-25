@@ -101,7 +101,8 @@
             <li><a href="#dashvariants3" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Students</a>
               <ul id="dashvariants3" class="collapse list-unstyled">
                 <li><a href="/all-student">All Student</a></li>
-                <li><a href="/defense-schedule">Defense Schedule</a></li>
+                 {{!-- <li><a href="/defense-schedule"> Defense Schedule</a></li> --}}
+                <li><a href="#" data-toggle="modal" data-target="#myModal2"> Defense Schedule</a></li>
                    
               </ul>
             </li>
@@ -154,7 +155,7 @@
         </button>
       </div>
 
-      <form method="post" action="schedule-form">
+      <form method="post" action="/schedule-form">
         <div class="modal-body">
           <!-- Forms Section-->
           <section class="forms">
@@ -166,13 +167,14 @@
                         <div class="form-group">
                           <label for="inlineFormInput" class="sr-only">Start Date</label>
                           <input name="startDate" type="text" id="datepicker" class="mx-sm-3 form-control" placeholder="Start Date">
+                          <input type="hidden" name="showNav" value="true">
                         </div>
           
                         <div class="form-group">
                           <label for="inlineFormInputGroup" class="sr-only">End Date</label>
                           <input name="endDate" type="text" id="datepicker2" class="mx-sm-3 form-control" placeholder="End Date">
                         </div>
-          
+
                         <div class="form-group">
                           <label for="inlineFormInputGroup" class="sr-only">Year</label>
                           <input name="year" type="number" class="mx-sm-3 form-control" placeholder="Year">
@@ -205,7 +207,123 @@
 </div>
 
 
-       
+{{!-- Defense modal --}}
+<section class="forms"> 
+            <div class="container-fluid">
+              <div class="row">
+                <!-- Modal Form-->
+                <div class="col-lg-12">
+                  <div class="card">
+                     
+                      <!-- Modal-->
+                      <div id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+                        <div role="document" class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 id="exampleModalLabel" class="modal-title">Defence Schedule</h4>
+                              <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <form method="post" action="/defense-schedule">
+                            <div class="modal-body select_tag">
+                             
+                              {{!-- <form method="post" action="/defense-schedule"> --}}
+                               <div class="row">
+                               
+                                <div class="form-group col-md-6">
+                                  <label for="text">Date :</label>
+                                  <input id="date" name="startingDate" type="text" placeholder="Date" class="form-control">
+                                </div>
+                                
+                                <div class="form-group col-md-6">
+                                  <label for="text">Starting Time :</label>
+                                  <input type="time" name="startingTime" placeholder="Starting Time (Ex. 9.00 AM)" class="form-control">
+                                </div>
+                                <div class="form-group col-md-6">
+                                  <label for="text">Ending Time :</label>
+                                  <input type="time" name="endingTime" placeholder="Ending Time (Ex. 4.00 AM)" class="form-control">
+                                </div>
+                                <div class="form-group col-md-6">
+                                  <label for="text">Lunch Hour :</label>
+                                  <input type="time" name="lunchTime" placeholder="Lunch Hour (Ex. 12.01 PM)" class="form-control">
+                                </div>
+                                
+                                   <div class="form-group col-md-6">
+                                      <div class="select">
+                                        <select name="duration" class="form-control">
+                                          <option>Duration per project</option>
+                                          
+                                          <option value=".25">15 min</option>
+                                          <option value=".5">30 min</option>
+                                          <option value=".75">45 min</option>
+                                          <option value="1">60 min</option>
+                      
+                                        </select>
+                                      </div>
+                                  </div>
+                                   <div class="form-group col-md-6">
+                                      <div class="select">
+                                        <select name="semester" class="form-control">
+                                          <option>Select semister</option>
+                                          <option>Spring</option>
+                                          <option>Summer</option>
+                                          <option>Fall</option>
+                                        </select>
+                                      </div>
+                                  </div>
+                                  
+                                <div class="form-group col-md-6">
+                                      <div class="select">
+                                        <select name="courseCode" class="form-control">
+                                          <option>Course Code</option>
+                                          <option>CSE-4400</option>
+                                          <option>CSE-3300</option>
+                                       
+                                        </select>
+                                      </div>
+                                  </div>
+                                 <div class="form-group col-md-6">
+                                      <div class="select">
+                                        <select name="year" class="form-control">
+                                           <option value="">Select Year</option>
+                                            <option value="2017">2017</option>
+                                            <option value="2018">2018</option>
+                                            <option value="2019">2019</option>
+                                            <option value="2020">2020</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2022">2022</option>
+                                            <option value="2023">2023</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2025">2025</option>
+                                            <option value="2026">2026</option>
+                                            <option value="2027">2027</option>
+                                            <option value="2028">2028</option>
+                                            <option value="2029">2029</option>
+                                            <option value="2030">2030</option>
+                                            <option value="2031">2031</option>
+                                            
+
+                                        </select>
+                                      </div>
+                                  </div>
+                                  
+                                  </div>
+                              
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                              {{!-- <button type="button" class="btn btn-primary">Start scheduling</button> --}}
+                               <button type="submit" value="Submit" class="btn btn-success">Submit</button>
+                            </div>
+                            </form>
+
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
 
 
  

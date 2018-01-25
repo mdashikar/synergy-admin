@@ -96,18 +96,28 @@ var ProjectSubmit = mongoose.model('ProjectSubmit', {
         minLength: 10,
         trim: true
     }],
-    createdAt:{
-        date: Date
-        
-    },
     pending:{
         type : Boolean,
         default : true
+    },
+    semester : {
+        type: String
+    },
+    year: {
+        type: Number
+    },
+    time: {
+        type: String
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
-    // _creator: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     required:true
-    // }
+ 
+  // _creator: {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     required:true
+  // }
 });
 
 

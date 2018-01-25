@@ -3,6 +3,7 @@ const User = require('../models/user');
 const Supervisor = require('../models/supervisor');
 const _ = require('lodash');
 const { ProjectSubmit } = require('../models/proposals');
+const registered = require('../models/registered_user');
 var template = require('../server/template');
 var upload = require('../server/upload');
 const async = require('async');
@@ -12,9 +13,11 @@ const mailer = require('../misc/mailer');
 const passport = require('passport');
 const randomstring = require('randomstring');
 const passportConfig = require('../config/passport');
+const moment = require('moment');
 const Invite = require('../models/invite');
 const Student = require('../models/student');
 const Schedule = require('../models/schedule_form');
+var ontime = require("ontime");
 var crypto = require('crypto');
 var algorithm = 'aes-256-ctr',
 password = 'd6F3Efeq';
@@ -68,9 +71,6 @@ router.get('/remove-supervisors', (req, res, next) => {
         }, (e) => {
             res.status(404).send(e);
         });
-
-
-
     } else {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
     }
@@ -419,9 +419,13 @@ router.get('/supervisor-list/:id', (req, res, next) => {
 router.get('/all-student', (req, res, next) => {
     if(req.user)
     {
-        ProjectSubmit.find().then((students) => {
-            res.render('main/export', { students: students, title: 'All students' });
-        });
+        ProjectSubmit.find({pending:false}).then((students) => {
+            
+            res.render('main/export', { students: students, title: 'All students' });     
+        });  
+        
+
+        
     }
     else {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
@@ -430,48 +434,103 @@ router.get('/all-student', (req, res, next) => {
 });
 
 //
-router.get('/defense-schedule', (req,res,next) => {
+// router.get('/defense-schedule', (req,res,next) => {
+//     if(req.user)
+//     {
+//         res.render('main/export', { projectSubmit: projectSubmit, title: 'Defense Schedule'});
+//     }
+// });
+router.post('/defense-schedule', (req,res,next) => {
     if(req.user)
     {
-        ProjectSubmit.find().then((defense) => {
-            var starting_time = 10;
-            var ending_time = 15;
-            var duration = .3000000000001;
-            var starting = [];
-            var ending = [];                                                                                 
-            var count = 0;
-            for (var i = starting_time;i<ending_time; i+=duration)
-            {
-              
-                var x = Math.round(i);
-                var y = i.toFixed(2);
-                var z = parseInt(y);
-                
-                if (y == z+.60)
-                {
-                    
-                    i = x++;
-                    
-                }
-               
-                starting.push(i.toFixed(2));
-               
-                if(count > 0)
-                {
-                    ending.push(i.toFixed(2));
-                }
-                count ++;
-                var con = starting.concat(ending);
-             
-                
-                
+        console.log("date : ",req.body.startingDate);
+        console.log("start : ",req.body.startingTime);
+        console.log("end : ",req.body.endingTime);
+        console.log("lunch : ",req.body.lunchTime);
+        console.log("duration : ",req.body.duration);
+        console.log("semester : ",req.body.semester);
+        console.log("year : ",req.body.year);
+        console.log("course Code : ",req.body.courseCode);
+
+        var flag = true;
+        var date = req.body.startingDate;
+        var sTime = req.body.startingTime;
+        var a = date + " " + sTime;
+        var startTime = moment(a,"MM-DD-YYYYY HH:mm");
+        console.log("startTime: ",startTime);
+
+        var eTime = req.body.endingTime;
+        var endTime = moment(eTime,"HH:mm").format('LT');
+        console.log("endTime: ",endTime);
+
+        var lTime = req.body.lunchTime;
+        var lunchTime = moment(lTime,"HH:mm").format('LT');
+        console.log("LunchTime: ",lunchTime);
+
+        var duration = req.body.duration;
+        var temp = startTime;
+        var year = req.body.year;
+        var semester = req.body.semester;
+        var courseCode = req.body.courseCode;
+
+       
         
-            }
-           // console.log(`Starting time :${starting}`);
-           // console.log(`Ending time :${ending}`);
-           
-            res.render('main/export', { defense: defense, title: 'Defense Schedule'});
+
+        
+        
+     
+       
+        // var flag = true;
+        // var check = true;
+        // var startTime = moment("2018-02-20 13:00","YYYY-MM-DD HH:mm");
+        // var endTime = moment("14:00","HH:mm").format('LT');
+        // var lunchTime = moment("16:30","HH:mm").format('LT');
+        // var duration = .5;
+        // var temp = startTime;
+     
+        ProjectSubmit.find({projectCourseCode : courseCode,
+            year : year,
+            semester : semester,
+            pending : false}).then((projectSubmit) => 
+        // ProjectSubmit.find({}).then((projectSubmit) =>                                                                                         
+        {
+            projectSubmit.forEach(function(i) 
+            {
+                if(flag == true && startTime.format('LT') == lunchTime)
+                {
+                    console.log("in");
+                    startTime = moment(startTime).add(1, 'hours');
+                    flag = false;
+                   
+
+                }
+                
+                    i.time = startTime.format('LLL');
+                    i.save();
+                    startTime = moment(startTime).add(duration, 'hours');
+                    
+                   
+                
+                if(endTime == startTime.format('LT'))
+                {
+                    console.log("in2");
+                    startTime = temp;
+                    startTime = moment(startTime).add(1, 'day');
+                    temp = startTime;
+                    flag = true;
+                }
+              
+            });
+
+            res.render('main/export', { projectSubmit: projectSubmit, title: 'Defense Schedule'});
+            //res.redirect('/defense-schedule');
         });
+        
+
+        
+
+        
+        
     }
     else {
         res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
@@ -489,20 +548,25 @@ router.post('/schedule-form', (req, res, next) => {
     var schedule = new Schedule();
     schedule.startDate = req.body.startDate;
     schedule.endDate = req.body.endDate;
-    var showNav = false;
-    if(req.body.startDate){
-        showNav = true;
-    } 
-    if(req.body.endDate){
-        setTimeout(() => {
-            showNav = false;
-        }, req.body.endDate);
-    }
-    console.log('Show nav bar', showNav);
-
+    schedule.showNav = req.body.showNav;
+    var time = new Date(req.body.endDate);
+    var endTime = time.getTime();
+    
     schedule.save(function(err){
+        console.log("Schedule Data", schedule);
+        if(err) return next(err);
         res.redirect('/');
-    })
+    });
+    console.log("Non - Blocking");
+
+    setTimeout(function(){
+        console.log('10');
+      Schedule.findOneAndRemove({ _id: schedule._id }, function(err, doc) {
+        if (err) {
+          throw err;
+        }
+      });
+    }, 10000000000);
   });
 
 
