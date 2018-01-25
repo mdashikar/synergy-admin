@@ -60,12 +60,12 @@
                               <th scope="row"> {{@index}}</th>
                               <td>
                                   <div class="text">
-                                      <a href="/proposals/{{0._id}}"><h3 class="h4">{{0.projectName}}</h3></a><br><small>Lorem Ipsum Dolor</small>
+                                      <a href="/proposals/{{0._id}}"><h3 class="h4">{{0.projectName}}</h3></a><br><small></small>
                                   </div>
                               </td>
                               <td>{{0.projectType}}</td>
                               <td>{{#with 0.memberId}}
-                                    <h2>{{this}}</h2>
+                                    <h3>{{this}}</h3>
                                     {{/with}}
                               </td>
                               <td>
@@ -139,7 +139,7 @@
                               <th scope="row">  {{@key}}</th>
                               <td>
                                   <div class="text">
-                                      <a href="/proposals/{{this._id}}"><h3 class="h4">{{projectName}}</h3></a><br><small>Lorem Ipsum Dolor</small>
+                                      <a href="/proposals/{{this._id}}"><h3 class="h4">{{projectName}}</h3></a><br><small></small>
                                   </div>
                               </td>
                               <td>{{projectType}}</td>
