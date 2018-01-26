@@ -9,7 +9,7 @@
                   <div class="logo">
                     <h1>Synergy Admin</h1>
                   </div>
-                  <p>Project managament and collaboration system</p>
+                  <p>Welcome to synergy admin app.</p>
                 </div>
               </div>
             </div>
@@ -22,7 +22,7 @@
                 <div class="content">
                   {{#if errorMessage}}
                       <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                          <strong>Some Error</strong> {{ errorMessage}}
+                          <strong>{{ errorMessage}}</strong> 
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                           </button>
@@ -51,16 +51,20 @@
                     <!-- This should be submit button but I replaced it with <a> for demo purposes-->
                   </form>
                   <a href="#" data-toggle="modal" data-target="#forgotPasswordModal" class="forgot-pass">Forgot Password?</a>
-                  <br><small>Do not have an account? </small><a href="/signup" class="signup">Signup</a>
                 </div>
               </div>
             </div>
+            <div class="copyrights text-center">
+              <p>Developed by
+                <a href="#" class="external">Synergy</a>
+              </p>
+            </div>
           </div>
+          
         </div>
+        
       </div>
-      <div class="copyrights text-center">
-        <p>Design by <a href="#" class="external">Synergy</a></p>
-      </div>
+      
     </div>
 
     <!-- Modal Form-->
