@@ -1008,6 +1008,39 @@ router.get('/all-student', (req, res, next) => {
     
 });
 
+router.get('/final-year', (req, res, next) => {
+    if(req.user)
+    {
+        ProjectSubmit.find({pending:false,projectCourseCode:"CSE-4400"}).then((students) => {
+            
+            res.render('main/export', { students: students, title: '4th Year Students' });     
+        });  
+        
+
+        
+    }
+    else {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
+    
+});
+router.get('/third-year', (req, res, next) => {
+    if(req.user)
+    {
+        ProjectSubmit.find({pending:false,projectCourseCode:"CSE-3300"}).then((students) => {
+            
+            res.render('main/export', { students: students, title: '3rd Year Students' });     
+        });  
+        
+
+        
+    }
+    else {
+        res.render('accounts/login', { title: 'Synergy - Admin Dashboard' });
+    }
+    
+});
+
 
 router.post('/defense-schedule', (req,res,next) => {
     if(req.user)
