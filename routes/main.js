@@ -81,7 +81,7 @@ router.get('/remove-supervisors', (req, res, next) => {
 router.get('/proposals', (req, res, next) => {
     if (req.user) {
 
-        ProjectSubmit.find({ 'pending': 'true' }).then((projectSubmit) => {
+        ProjectSubmit.find({ 'pending': 'true' }).sort({_id: -1}).then((projectSubmit) => {
             res.render('main/tables', { title: 'Synergy - Admin Dashboard', projectSubmit: projectSubmit, message: req.flash('success') });
             // res.render('proposalList', { title: 'Synergy Proposal List'});
 
@@ -1008,13 +1008,7 @@ router.get('/all-student', (req, res, next) => {
     
 });
 
-//
-// router.get('/defense-schedule', (req,res,next) => {
-//     if(req.user)
-//     {
-//         res.render('main/export', { projectSubmit: projectSubmit, title: 'Defense Schedule'});
-//     }
-// });
+
 router.post('/defense-schedule', (req,res,next) => {
     if(req.user)
     {
@@ -1125,8 +1119,9 @@ router.post('/schedule-form', (req, res, next) => {
         if (err) {
           throw err;
         }
+        console.log("updated");
       });
-    }, 10000000000);
+    }, 1000000000);
   });
 
 
