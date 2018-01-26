@@ -38,7 +38,7 @@ router.route('/')
                     errorMessage: req.flash('errors'),
                     successMessage: req.flash('success')
                 });
-                // res.render('proposalList', { title: 'Synergy Proposal List'});
+               
 
             }, (e) => {
                 res.status(404).send(e);
@@ -781,7 +781,7 @@ router.post('/proposals/assign/:id', (req, res, next) => {
                        and your supervisor name is <strong> ${req.body.name} </strong>.
                        <br/>
                        To register in synergy platform please go through the following link or click the button to activate your account : <br>
-                       <a href="http://synergy-student.herokuapp.com/signup/${id}/${encryptEmail}/${secretToken}">http://synergy-student.herokuapp.com/signup/</a>
+                       <a href="http://synergy-student.herokuapp.com/signup/${id}/${encryptEmail}/${secretToken}">http://synergy-student.herokuapp.com/signup/${id}/${encryptEmail}/${secretToken}</a>
                        <br/>
                                           
                         <br/><br/>
